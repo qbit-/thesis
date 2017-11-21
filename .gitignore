@@ -1,0 +1,10 @@
+*.aux
+*.bbl
+*.synctex*
+*.log
+*.out
+*.pdf
+*.blg
+*.backup*
+*Notes.bib
+*.zip
