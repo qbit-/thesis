@@ -1,4 +1,4 @@
-*.aux
+OB*.aux
 *.bbl
 *.synctex*
 *.log
@@ -8,3 +8,10 @@
 *.backup*
 *Notes.bib
 *.zip
+*.loc
+*.lof
+*.lot
+*.idx
+*.aux
+*.cls
+*.toc
