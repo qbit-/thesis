@@ -1,10 +1,44 @@
 \thispagestyle{empty}
-\begin{abstract}
-Ever increasing demand for high data rate wireless transmissions with high spectral efficiency leads to utilization of communication systems with multiple transmit and receive antennas. In addition, excellent error-rate performance can be achieved with iterative receiver structure composed of inner detection and outer decoding. In this work we design algorithms and architectures for iterative wireless receivers with multiple antennas that are applied in both downlink and uplink scenarios. It is our goal to develop wireless receivers with implementable hardware cost, excellent error-rate performance while achieving high data rates in the order of 1 Gbps.
+\begin{abstract} 
 
-Soft sphere detection algorithm with reduced computational complexity based on probabilistically bounded candidate-search process is proposed. The error-rate performance are improved compare to other bounded soft sphere detection schemes for the same hardware cost. Partial candidate-search process called QRD-QLD detection is also developed for fast mobile downlink receivers. It has significantly smaller detection latency than the well-known QRD-M algorithm proposed for several emerging wireless systems. The error-rate performance are equivalent for identical hardware complexity. We apply bounded soft sphere detection in the single-carrier uplink receiver specified for the 3GPP-LTE wireless standard. By applying sphere post-detection after MMSE-based channel pre-equalization, the interference from multiple users is successfully suppressed with limited increase of computational complexity. Cost-efficient high-speed architecture design of soft sphere detector based on bounded candidate-search has been also implemented. 
+A constant goal of quantum chemistry is devising accurate and computationally 
+effective methods for molecular simulations. The accuracy of chemical 
+predictions ultimately depends on the ability of a method to model electronic 
+correlation for all ranges of parameters of the molecular systems. While 
+effective tools exist, they often have unfavorable computational demands, are 
+not systematically improvable or work well only in a particular region of 
+molecular parameters, such as equilibrium geometry. In this thesis we present 
+our work on two perspective approaches to capture electronic correlation with 
+computational cost scaling only quartically in the system size.
 
-Outer LDPC decoding is used at the receiver back-end. Different levels of processing parallelism for outer structured semi-parallel LDPC decoders are investigated. We propose estimation methodology that quickly and accurately determines decoder architecture with the best tradeoff between area cost, decoding throughput and error-rate performance. Two decoder architectures with different levels of processing parallelism are implemented. Block-structured LDPC codes are designed for particular inner soft sphere detector and channel environment supporting modular high-speed decoder architectures. Finally, we propose methodology to estimate level of processing parallelism for the physical layer portion of iterative receiver necessary to achieve real-time data-rates of future wireless systems, such as the 1 Gbps downlink transmission.
+First, we extend the application of the Projected Hartree-Fock (PHF)
+method, which provides an effective description of electron correlation both 
+near and far from the equilibrium. To make it practical for chemical 
+simulations, energy derivatives and dipole moments need to be evaluated.
+We derive analytical energy gradients for the single-reference PHF theory 
+and use it to calculate equilibrium geometries and harmonic frequencies of 
+sizable molecules.
+
+A way to systematically improve the PHF method is to increase the number of 
+reference states in the calculation. The resulting approach may reach exact 
+solution, but is much more demanding numerically. Fortunately, numerically 
+intensive parts of the multi-reference PHF can be effectively 
+parallelized on modern computers. We implemented parallel multi-reference PHF 
+and present simulations of very large Hubbard systems. 
+ 
+Our second line of work is a family Coupled Cluster methods, often considered 
+a "golden standard" of quantum chemistry. We show how to reduce the 
+computational effort of the Restricted Coupled Cluster with Singles and 
+Doubles by two orders of magnitude by introducing tensor decompositions. 
+We demonstrate the accuracy of our low-cost approach by benchmark 
+calculations on various organic molecules.
+
+An interesting property of our new Tensor Structured Coupled Cluster is the 
+ability to cure the failure of the original Coupled Cluster far from 
+equilibrium geometries, or in strong correlation regime. We illustrate this by 
+simulations of molecular dissociation and Hubbard systems. Lastly, we discuss 
+the extension of our scheme to other methods in the Coupled Cluster family. 
+ 
 \end{abstract}
 
 
