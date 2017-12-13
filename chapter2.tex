@@ -1,17 +1,21 @@
 \chapter{Tensor structured Coupled Cluster}
 \label{ch:tcc} 
-
+The discussion presented in this section based on our published work, see 
+Ref.~\cite{schutski2017tensor}, and also on new results intended for another 
+publication.
 
 \section{Motivation}
 \label{sec:Introduction} 
-Having seeen that both strong and weak electronic correlation can be captured 
+Having seen that both strong and weak electronic correlation can be captured 
 by methods based on the Projected Hartree-Fock, let us now turn to another 
-powerful family of methods to solve many-body problem, namely, Coupled Cluster 
-(CC). Since their introduction in 1984,\cite{} Coupled Cluster methods quickly 
-became a "golden standard" of quantum chemistry due to their exceptional 
- ability to capture weak electronic correlation, while having polynomial 
-computational cost in basis size. Another attractive property of most CC 
-methods are size consistency and size extensivity.\cite{} 
+powerful family of theories to solve many-body problems, namely, Coupled 
+Cluster (CC). Since their introduction in the nuclear 
+physics,\cite{coester1958bound, coester1960short} Coupled Cluster methods 
+quickly became a "gold standard" of quantum chemistry due to their exceptional 
+ability to capture weak electronic correlation, while having polynomial 
+computational cost in basis size. Another attractive properties of most CC 
+methods are size consistency and size extensivity.\cite{pople1978electron, 
+bartlett1978many, crawford2000introduction, bartlett2007coupled} 
 
 {\color{red} Insert 2 paragraphs here where accuracy of Coupled Cluster is 
 discussed. Take it from Irek.}
@@ -19,24 +23,25 @@ discussed. Take it from Irek.}
 Coupled Cluster methods parameterize the solution in terms of a reference 
 wavefunction $| 0 \rangle$ and a set of excitation operators:
 \begin{equation}
- | \phi \rangle  = \exp({}^1T + {}^2T + {}^3T + \ldots) | 0 \rangle
+ | \phi \rangle  = \exp({}^1\hat{T} + {}^2\hat{T} + {}^3\hat{T} + \ldots) | 0 
+\rangle
 \end{equation}
-where ${}^1T, {}^2T, \ldots$ are appropriate single, double, and higher order 
-excitations from the reference state $| 0 \rangle$ (usually a HF solution). The 
-method with n-body excitations is exact for n-electron systems. In 
-practice, however, excitation operator is truncated at doubles due to high 
-computational cost, leading to Coupled Cluster with Singles and Doubles methods 
-(CCSD).\cite{} Higher order amplitudes can be included approximately
-with the help of perturbation theory, such as in the highly accurate and 
-well known Coupled Cluster with Singles, Doubles and perturbative 
-Triples (CCSD(T)) approach.\cite{}
+where ${}^1\hat{T}, {}^2\hat{T}, \ldots$ are appropriate single, double, and 
+higher order excitations from the reference state $| 0 \rangle$ (usually a HF 
+solution). The method with n-body excitations is exact for n-electron systems. 
+In practice, however, the excitation operator is truncated at doubles due to 
+high computational cost, leading to Coupled Cluster with Singles and Doubles 
+methods (CCSD).\cite{purvis1982full} Higher order excitations can be included 
+approximately with the help of perturbation theory, such as in the highly 
+accurate and widely used Coupled Cluster with Singles, Doubles and 
+perturbative Triples (CCSD(T)) approach.\cite{bartlett1990non}
 
 CC methods are also distinguished by the form of excitation operators, 
-leading to Restricted (RCCSD), Unrestricted (UCCSD) and General (GCCSD) 
-Coupled Cluster, in the same way as Hartree-Fock methods can be classified. 
-A further analogy to HF method is that the solution of conventional Restricted 
-Coupled Cluster method has proper $S^{2}$ and $S^{z}$ symmetry, but a wrong 
-energy in case of strong correlation.
+leading to Restricted (RCCSD),\cite{scuseria_ccsd} Unrestricted (UCCSD) and 
+General (GCCSD) Coupled Cluster, in the same way as Hartree-Fock methods can be 
+classified. A further analogy to HF method is that the solution of conventional 
+Restricted Coupled Cluster method has proper $S^{2}$ and $S^{z}$ symmetry, but a 
+wrong energy in case of strong correlation.
 
 \begin{figure}[!ht]
 \centering
@@ -45,7 +50,116 @@ energy in case of strong correlation.
 correlation regimes. System: $N_{2}$, cc-pVDZ basis set. Exact is FCI solution.}
 \end{figure}
 
-This failure of RCCSD in strong correlation regime is one (and probably the 
-only) weak side of traditional Coupled Cluster. Another drawback is the 
-computational cost, which scales as $O(N^6)$ for RCCSD, where $N$ is a 
-size of basis. Both of those problems 
+This failure of Restricted CCSD in strong correlation regime is one (and 
+probably most serious) downside of traditional Coupled Cluster theory. Another 
+drawback is a steep growth of computational cost,\cite{noga1987full, 
+scuseria1989coupled} which scales as $O(N^6)$ for CCSD, $O(N^7)$ for CCSD(T), 
+and $O(N^8)$ for CCSDT, where $N$ is a size of basis. In the following we set 
+to tackle both of these problems of conventional Coupled Cluster theory with 
+tensor decompositions.
+
+\section{Restricted Coupled Cluster with Singles and Doubles}
+Let us start by describing the traditional Restricted Coupled Cluster 
+\emph{ansatz}.\cite{bartlett2007coupled} The wavefunction is 
+parameterized by an excitation operator $T$ and a single reference 
+determinant $| 0 \rangle$:
+
+\begin{equation}
+ | \phi \rangle  = \exp(\hat{T}) | 0 \rangle = \exp({}^1\hat{T} + {}^2\hat{T} + 
+{}^3\hat{T} + \ldots) | 0 \rangle
+\end{equation}
+
+In restricted version of Coupled Cluster theory excitation operators are spin 
+adapted combinations of creation and annihilation operators of the form:
+
+\begin{equation}
+\begin{split}
+ E_{i}^{a} & = \frac{1}{2} \cdot (a_{a, \uparrow}^{\dagger} a_{i, \uparrow} + 
+a_{a, \downarrow}^{\dagger} a_{i, \downarrow}) \\
+ {}^{1}\hat{T} & = {}^{1}T_{i}^{a} E_{i}^{a} \\
+ {}^{2}\hat{T} & = \frac{1}{2} ~~ {}^{2}T_{ij}^{ab} E_{i}^{a} E_{j}^{b} \\
+ \ldots
+\end{split}
+\end{equation}
+
+Here indices $i, j$ represent particles, $a, b$ represent holes and summation 
+is implied over repeated indices. The quantities denoted by $T$ are 
+excitation amplitude tensors, e. g. two, four or higher dimensional arrays of 
+numbers.
+
+The excitation operator is truncated to a specific level, the most widely used 
+choice being doubles, e. g. ${}^{2}\hat{T}$. With a wavefunction in the 
+chosen form the Schr{\"o}edinger equation is
+
+\begin{equation}
+ H \exp(\hat{T}) |0 \rangle = E \exp(\hat{T}) |0 \rangle
+\end{equation}
+
+This equation is usually solved projectively by multiplying both sides of the 
+expression by $\exp(-\hat{T})$. 
+\begin{equation}
+ \exp(-\hat{T}) H \exp(\hat{T)} | 0 \rangle = \bar{H} | 0 \rangle = E | 0 
+\rangle
+\label{eq:cc_lhs}
+\end{equation}
+
+From equation \ref{eq:cc_lhs} the energy can be extracted as:
+
+\begin{equation}
+ E = \langle 0 | \bar{H} | 0 \rangle
+\end{equation}
+
+To obtain excitation amplitudes, the similarity transformed Hamiltonian 
+$\bar{H}$ is then projected onto the set of excited determinants on the left.
+Denoting these determinants as $\langle {}^{1}Z |$, $\langle {}^{2}Z|$
+for single, double etc. excitations, one comes to a set of equations
+
+\begin{equation}
+\begin{cases}
+ \langle {}^{1} Z_{i}^{a} | \bar{H} | 0 \rangle = {}^{1}R_{i}^{a} = 0 \\
+ \langle {}^{2} Z_{ij}^{ab} | \bar{H} | 0 \rangle = {}^{2}R_{ij}^{ab} = 0 \\
+ \ldots
+\end{cases}
+\label{eq:cc_residuals}
+\end{equation}
+
+where for every excited determinant the corresponding value of the residuals 
+$R$ is zero. Residual equations are polynomial in the excitation amplitude 
+tensors ${}^{1}T_{i}^{a}$, ${}^{2}T_{ij}^{ab}$ etc.
+
+A common way of solving Eqn. \ref{eq:cc_residuals} is to split residual 
+expressions into left and right hand sides to extract amplitudes. One such 
+splitting is
+\begin{subequations}
+\begin{align}
+ {}^{1}T_{i}^{a} &= {}^{1}D_{i}^{a} ~ {}^{1}G_{i}^{a}({}^{1}T, {}^{2}T), \\
+{}^{2}T_{ij}^{ab} &= {}^{2}D_{ij}^{ab} ~ {}^{2}G_{ij}^{ab}({}^{1}T, {}^{2}T), 
+\label{eq:cc_amplitude_equations_b}
+\end{align}
+\label{eq:cc_amplitude_equations}
+\end{subequations}
+Here, ${}^1D$ and ${}^2D$ are orbital energy
+denominator tensors constructed from diagonal elements of the Fock matrix
+$F$:
+
+\begin{subequations}
+\begin{align} {}^1D_i^a &= \frac{1}{F_a^a - F_i^a}, \\
+{}^{2}D_{ij}^{ab} &= \frac{1}{F_{a}^{a} + F_{b}^{b} - F_{i}^{i} -
+F_{j}^{j}}.
+\end{align}
+\label{eq:denom_definition}
+\end{subequations} 
+
+Amplitude equations \ref{eq:cc_amplitude_equations} are solved by iterations 
+until a fixed point is found. 
+
+Solving amplitude equations is computationally demanding, and determines a 
+very steep cost of Coupled Cluster approach. For example, the evaluation of 
+the right hand side of Eq. \ref{eq:cc_amplitude_equations_b} requires 
+$O(N^6)$ summations and multiplications per iteration, hence RCCSD method has 
+$O(N^6)$ cost. The root of the problem is the need to manipulate high order 
+tensors representing the Hamiltonian and excitation amplitudes. This problem, 
+however, can be circumvented by using novel techniques of tensor 
+decompositions coming from multilinear algebra.\cite{kolda2009tensor} 
+
+\section{Overview of tensor decompositions}
