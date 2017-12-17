@@ -1,4 +1,4 @@
-\chapter{Tensor structured Coupled Cluster}
+\chapter{Tensor Structured Coupled Cluster}
 \label{ch:tcc} 
 The discussion presented in this section based on our published work, see 
 Ref.~\cite{schutski2017tensor}, and also on new results intended for another 
@@ -88,7 +88,8 @@ excitation amplitude tensors, e. g. two, four or higher dimensional arrays of
 numbers.
 
 The excitation operator is truncated to a specific level, the most widely used 
-choice being doubles, e. g. ${}^{2}\hat{T}$. With a wavefunction in the 
+choice being doubles, e. g. ${}^{2}\hat{T}$, leading to RCCSD model. If singles 
+are omitted as well, we end up with RCCD method. With a wavefunction in the 
 chosen form the Schr{\"o}edinger equation is
 
 \begin{equation}
@@ -103,14 +104,15 @@ expression by $\exp(-\hat{T})$.
 \label{eq:cc_lhs}
 \end{equation}
 
-From equation \ref{eq:cc_lhs} the energy can be extracted as:
+From equation \ref{eq:cc_lhs} the energy can be extracted as an expectation 
+value of the transformed Hamiltonian $\bar{H}$:
 
 \begin{equation}
  E = \langle 0 | \bar{H} | 0 \rangle
 \end{equation}
 
 To obtain excitation amplitudes, the similarity transformed Hamiltonian 
-$\bar{H}$ is then projected onto the set of excited determinants on the left.
+is projected onto the set of excited determinants on the left.
 Denoting these determinants as $\langle {}^{1}Z |$, $\langle {}^{2}Z|$
 for single, double etc. excitations, one comes to a set of equations
 
@@ -147,19 +149,154 @@ $F$:
 {}^{2}D_{ij}^{ab} &= \frac{1}{F_{a}^{a} + F_{b}^{b} - F_{i}^{i} -
 F_{j}^{j}}.
 \end{align}
-\label{eq:denom_definition}
+\label{eq:cc_denom_definition}
 \end{subequations} 
 
 Amplitude equations \ref{eq:cc_amplitude_equations} are solved by iterations 
-until a fixed point is found. 
+until a fixed point is found.
 
 Solving amplitude equations is computationally demanding, and determines a 
-very steep cost of Coupled Cluster approach. For example, the evaluation of 
+very steep cost of CC approach. For example, the evaluation of 
 the right hand side of Eq. \ref{eq:cc_amplitude_equations_b} requires 
 $O(N^6)$ summations and multiplications per iteration, hence RCCSD method has 
 $O(N^6)$ cost. The root of this problem is the need to manipulate high order 
 tensors representing the Hamiltonian and excitation amplitudes. This problem, 
 however, can be circumvented by using novel techniques of tensor 
-decompositions coming from multilinear algebra.\cite{kolda2009tensor} 
+decompositions coming from multilinear algebra,\cite{kolda2009tensor} as we 
+will show. 
 
-\section{Tensor decompositions and wiring diagrams}
+\section{Cost of Coupled Cluster and Tensor Decompositions}
+Let us discuss the cost of Coupled Cluster methods. The amplitude update 
+equation in RCCD, the simplest representative of CC family, is:
+
+\begin{equation}
+\begin{split}
+T^{ab}_{ij} & = D^{ab}_{ij} \cdot (- V^{ab}_{ij} \\
+& + \sum_{k \neq i} F^{k}_{i} T^{ab}_{kj}
++  \sum_{k \neq j} F^{k}_{j}  T^{ab}_{ik}
+- \sum_{c \neq a} F^{a}_{c}  T^{bc}_{ji}
+- \sum_{c \neq b} F^{b}_{c}  T^{ac}_{ij} \\
+& - T^{cd}_{ij}  V^{ab}_{cd}
++ T^{ac}_{ik}  V^{bk}_{cj} 
++ T^{ac}_{ki}  V^{bk}_{jc} 
++ T^{ac}_{kj}  V^{bk}_{ci} 
++ T^{bc}_{jk}  V^{ak}_{ci}\\
+&+ T^{bc}_{ki}  V^{ak}_{cj} 
++ T^{bc}_{kj}  V^{ak}_{ic}
+- 2 T^{ac}_{ik}  V^{bk}_{jc}
+- 2 T^{bc}_{jk}  V^{ak}_{ic}
+- T^{ab}_{kl}  V^{kl}_{ij} \\
+&- T^{ab}_{ik}  T^{cd}_{lj}  V^{kl}_{cd} 
+- T^{ab}_{kj}  T^{cd}_{il} V^{kl}_{dc}
+- T^{ab}_{kl}  T^{cd}_{ij} V^{kl}_{cd}
+- T^{ac}_{ij}  T^{bd}_{kl}  V^{kl}_{dc}
+-  T^{ac}_{ik}  T^{bd}_{lj} V^{kl}_{dc} \\
+&- T^{ac}_{ki}  T^{bd}_{jl} V^{kl}_{dc}
+- T^{ac}_{ki}  T^{bd}_{lj} V^{kl}_{cd}
+- T^{ac}_{kj}  T^{bd}_{li} V^{kl}_{dc}
+-  T^{ac}_{kl}  T^{bd}_{ji} V^{kl}_{cd}
++ 2    T^{ab}_{ik} T^{cd}_{lj}  V^{kl}_{dc}\\
+&+ 2    T^{ab}_{kj} T^{cd}_{il}  V^{kl}_{cd}
++ 2    T^{ac}_{ij} T^{bd}_{kl}  V^{kl}_{cd}
++ 2    T^{ac}_{ik}  T^{bd}_{jl}  V^{kl}_{dc}
++ 2    T^{ac}_{ik}  T^{bd}_{lj}  V^{kl}_{cd}  
++ 2    T^{ac}_{ki} T^{bd}_{jl}  V^{kl}_{cd}\\
+&+ 2    T^{ac}_{kl} T^{bd}_{ji}  V^{kl}_{dc}
+- 4    T^{ac}_{ik} T^{bd}_{jl}  V^{kl}_{cd})
+\end{split}
+\label{eq:ccd_amplitude_equation}
+\end{equation}
+
+Here $V$ is electron interaction tensor in the molecular orbital basis (Dirac 
+ordered), $F$ is a Fock matrix, and $D$ is an orbital energy denominator. Most 
+of the terms on the right hand side of Eqn.~\ref{eq:ccd_amplitude_equation} are 
+numerically expensive to evaluate. For example, the sixth 
+contraction in Eqn.~\ref{eq:ccd_amplitude_equation} is
+\begin{equation}
+ \tau^{ab}_{ij} = T^{ac}_{ik}  V^{bk}_{cj}
+ \label{eq:ccd_intermediate_example}
+\end{equation}
+This expression requires $O(N^6)$ multiplications and additions, as for every 
+of $N^4$ elements in the intermediate $\tau$ one has to calculate $N^2$ products
+and sums. To facilitate the discussion and the estimates of cost let us 
+introduce a graphical notation for tensors:
+
+\begin{equation}
+\vcenter{\hbox{\includegraphics[width=0.6\textwidth]{figures/cc_contraction_1}}}
+.
+\label{fig:cc_contraction_1}
+\end{equation}
+
+In the graphical notation we represent tensors by shapes, and their indices by 
+lines. Open lines mean free indices, and connected lines denote contraction 
+over respective indices. One can then estimate the cost of the contraction as 
+$N$ to the power of the number of connected lines plus the number of 
+open lines if each index had a size proportional to $N$. The cost scales 
+as $N^6$ in this example. For more examples of this notation please see the 
+Appendix~\ref{sec:Appendix}. We will omit index letters on further diagrams.
+
+The very same contraction can be done with lesser effort if electron 
+interaction tensor is approximated by a well known\cite{beebe1977, 
+vahtras1993integral, boman2008method, sierka2003fast} Resolution of Identity 
+(RI) decomposition, also known as Density Fitting (DF):
+%
+\begin{equation} V^{pq}_{rs} \approx \sum_{\alpha \alpha^{\prime}} 
+U_{pr}^{\alpha}
+D_{\alpha,\alpha^{\prime}} \tilde{U}_{qs}^{\alpha^{\prime}},
+\label{eq:ri_decomposition}
+\end{equation}
+Here $U$ and $\tilde{U}$ are three index integrals and $D$ is a generalized 
+overlap.\cite{ahmadi1995coulomb}. It is well known that the 
+error of this approximation decreases exponentially with the 
+size of auxiliary basis $\{ \alpha \}$, and that negligible errors are attained 
+with $dim(\{ \alpha \}) = O(N)$.\cite{beebe1977, sierka2003fast} 
+Diagrammatically, Eqn.~\ref{eq:ri_decomposition} is
+
+\begin{equation}
+\vcenter{\hbox{\includegraphics[width=0.6\textwidth]{figures/ri_decomposition}}}
+.
+\label{fig:ri_decomposition}
+\end{equation}
+
+By using the RI approximation to the electron interaction tensor the 
+intermediate in Eqn.~\ref{fig:cc_contraction_1} can be formed at $O(N^5)$ cost, 
+as shown on the diagram below:
+
+\begin{equation}
+\vcenter{\hbox{\includegraphics[width=0.6\textwidth]{figures/cc_contraction_2}}}
+.
+\label{fig:cc_contraction_2}
+\end{equation}
+
+The RI decomposition has been used for a long time to reduce the
+scaling of quantum chemistry algorithms, for example, in the RI-MP2
+method.\cite{ayala1999linear, werner2003fast, izmaylov2008resolution} An 
+important caveat is that, however, keeping the dimension of the auxiliary 
+basis low, in this approximation one can only separate a pair of indices $p, r$ 
+from another pair $q, s$, but not $p, q$ from $r, s$. This limitation is 
+apparent from the form of the form of the electron interaction operator:
+
+%\begin{equation}
+%\begin{split}
+% V^{pq}_{rs} & = \int \frac{\phi^{\ast}_{p}(r_{1}) 
+%\phi^{\ast}_{q}(r_{2}) \phi_{r}(r_{1}) \phi_{s}(r_{2})}{| r_{1} - r_{2} |} 
+%dr_{1} dr_{2} \\ & \approx \int \phi^{\ast}_{p}(r_{1}) \phi_{r}(r_{1})
+%\psy_{\alpha}(r_{1}) dr_{1} \int \phi^{\ast}_{q}(r_{2})  \phi_{s}(r_{2}) 
+%\psy_{\print{\alpha}}(r_{2}) dr_{2} \int \frac{\psy_{\alpha}(r_{1}) 
+%\psy_{\prime{\alpha}}(r_{2}) dr_{1} dr_{2} }{| r_{1} - r_{2} |} 
+%dr_{1} dr_{2}
+%\end{split}
+%\end{equation}
+
+
+interaction involve mostly indices $p,q$ and $r,s$, but not cross
+combinations between them (e.g. contractions where one tensor has
+indices $pq$ and $rs$ while another has indices $pr$ and $qs$), then a
+reduction of cost can be achieved,  When these cross combinations occur, 
+however,
+one needs to search for additional structure in the operator
+tensors. The latter can be achieved by the canonical polyadic
+decomposition.
+
+\section{Appendix}
+\label{sec:Appendix} 
