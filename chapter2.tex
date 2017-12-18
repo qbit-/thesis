@@ -165,7 +165,7 @@ however, can be circumvented by using novel techniques of tensor
 decompositions coming from multilinear algebra,\cite{kolda2009tensor} as we 
 will show. 
 
-\section{Cost of Coupled Cluster and Tensor Decompositions}
+\section{Tensor Contractions and the Cost of Coupled Cluster}
 Let us discuss the cost of Coupled Cluster methods. The amplitude update 
 equation in RCCD, the simplest representative of CC family, is:
 
@@ -273,30 +273,96 @@ scaling of quantum chemistry algorithms, for example, in the RI-MP2
 method.\cite{ayala1999linear, werner2003fast, izmaylov2008resolution} An 
 important caveat is that, however, keeping the dimension of the auxiliary 
 basis low, in this approximation one can only separate a pair of indices $p, r$ 
-from another pair $q, s$, but not $p, q$ from $r, s$. This limitation is 
+from another pair $q, s$, but not $p, q$ from $r, s$. This is 
 apparent from the form of the form of the electron interaction operator:
 
-%\begin{equation}
+\begin{equation}
 %\begin{split}
-% V^{pq}_{rs} & = \int \frac{\phi^{\ast}_{p}(r_{1}) 
-%\phi^{\ast}_{q}(r_{2}) \phi_{r}(r_{1}) \phi_{s}(r_{2})}{| r_{1} - r_{2} |} 
-%dr_{1} dr_{2} \\ & \approx \int \phi^{\ast}_{p}(r_{1}) \phi_{r}(r_{1})
-%\psy_{\alpha}(r_{1}) dr_{1} \int \phi^{\ast}_{q}(r_{2})  \phi_{s}(r_{2}) 
-%\psy_{\print{\alpha}}(r_{2}) dr_{2} \int \frac{\psy_{\alpha}(r_{1}) 
-%\psy_{\prime{\alpha}}(r_{2}) dr_{1} dr_{2} }{| r_{1} - r_{2} |} 
-%dr_{1} dr_{2}
+ V^{pq}_{rs} = \int \frac{\phi^{\ast}_{p}(r_{1}) 
+\phi^{\ast}_{q}(r_{2}) \phi_{r}(r_{1}) \phi_{s}(r_{2})}{| r_{1} - r_{2} |} 
+dr_{1} dr_{2} \\ 
+%& \approx \int \phi^{\ast}_{p}(r_{1}) \phi_{r}(r_{1}) \chi_{\alpha}(r_{1}) 
+%dr_{1} 
+%\int \phi^{\ast}_{q}(r_{2}) \chi_{s}(r_{2}) \psi_{\alpha^{\prime}}(r_{2}) 
+%dr_{2} \\ & \cdot \int \frac{\chi_{\alpha}(r_{1}) 
+%\chi_{\alpha^{\prime}}(r_{2})}{| r_{1} - 
+%r_{2} |} dr_{1} dr_{2}
 %\end{split}
+\label{eq:ri_decomposition_integral}
+\end{equation}
+As Eqn.~\ref{eq:ri_decomposition_integral} shows a separation of variables 
+between a pair of basis functions $p, r$ and $q, s$ is possible when the 
+distance $|r_{1} - r_{2}|$ is large. In contrast, this is not true for pairs 
+$p, q$ and $r, s$.
+
+This limitation of RI decomposition does not allow cost reduction during the 
+calculation of some terms in the ${}^{2}T$ equation of RCCD. For example, the 
+evaluation of the intermediate of the form:
+\begin{equation}
+ \tau^{ab}_{ij} = - T^{cd}_{ij}  V^{ab}_{cd}
+\end{equation}
+does not benefit from RI decomposition of $V$.
+\begin{equation}
+\vcenter{\hbox{\includegraphics[width=0.8\textwidth]{figures/cc_contraction_3}}}
+.
+\end{equation}
+Further approximations, however, can lead to reduced scaling, as we will show 
+later.
+
+\section{Tensor decompositions}
+To build a more flexible approximation of the interaction tensor we need to 
+consider Canonical Polyadic Decomposition (CPD).
+\subsection{Canonical Polyadic Decomposition}
+The canonical polyadic decomposition of a tensor is a decomposition of the 
+form:\cite{de2006link}
+%
+\begin{equation}
+T_{pqr\ldots} = \sum_\alpha a_p^\alpha \, b_q^\alpha \,
+c_r^\alpha \ldots
+\label{eq:cpd_definition}
+\end{equation}
+
+The CPD of a three index tensor is shown below diagrammatically.
+\begin{equation}
+\vcenter{\hbox{\includegraphics[width=0.4\textwidth]{figures/cp_decomposition}}}
+.
+\label{fig:cp_decomposition}
+\end{equation}
+%
+This factorization can be seen as one of the generalizations of classic 
+decompositions of matrices, such as QR, LU or Singular Value Decomposition, to 
+higher order tensors.\cite{kolda2009tensor} The important difference, is, 
+however, that no closed form algorithm to extract the CPD is known, and one has 
+to rely on iterative optimization techniques to calculate the 
+CPD.\cite{sorber2013optimization} Substantial effort has been made by the 
+mathematical community to develop approaches for doing so. We refer the reader 
+to the corresponding reviews\cite{kolda2009tensor, sidiropoulos2016tensor} for 
+further details.
+
+\subsection{Tensor Hypercontraction}
+The resolution of identity, which we considered before, can be combined with 
+the canonical decomposition. Indeed, if three-index tensors in RI are further 
+approximated by CPD one comes to a Tensor Hypercontraction introduced by 
+Martinez \emph{et al.}\cite{hohenstein_thc1, hohenstein_thc2, hohenstein_thc3}
+The THC is a decomposition of fourth order tensors of the form:
+\begin{equation}
+\begin{split} V_{pqrs} & = \sum_{\alpha \beta} W^{1}_{p,\alpha} W^{2}_{q, 
+\alpha}
+X_{\alpha, \beta} W^{3}_{r, \beta} W^{4}_{s, \beta} 
+\end{split}
+\label{eq:thc_definition}
+\end{equation}
+Diagrammatically, THC is
+
+%\begin{equation}
+%\vcenter{\hbox{\includegraphics[width=0.6\textwidth]{figures/thc_decomposition}
+%}
+%.
+%\label{fig:thc_decomposition}
 %\end{equation}
+THC can be seen as a further approximation to RI, which is aparent from the 
+following diagram:
 
-
-interaction involve mostly indices $p,q$ and $r,s$, but not cross
-combinations between them (e.g. contractions where one tensor has
-indices $pq$ and $rs$ while another has indices $pr$ and $qs$), then a
-reduction of cost can be achieved,  When these cross combinations occur, 
-however,
-one needs to search for additional structure in the operator
-tensors. The latter can be achieved by the canonical polyadic
-decomposition.
 
 \section{Appendix}
 \label{sec:Appendix} 
