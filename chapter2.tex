@@ -248,8 +248,9 @@ D_{\alpha,\alpha^{\prime}} \tilde{U}_{qs}^{\alpha^{\prime}},
 Here $U$ and $\tilde{U}$ are three index integrals and $D$ is a generalized 
 overlap.\cite{ahmadi1995coulomb}. It is well known that the 
 error of this approximation decreases exponentially with the 
-size of auxiliary basis $\{ \alpha \}$, and that negligible errors are attained 
-with $dim(\{ \alpha \}) = O(N)$.\cite{beebe1977, sierka2003fast} 
+size of auxiliary basis $\{ \alpha \}$, called the rank of RI, and that 
+negligible errors are attained 
+with $dim(\{ \alpha \}) = r_{RI} = O(N)$.\cite{beebe1977, sierka2003fast} 
 Diagrammatically, Eqn.~\ref{eq:ri_decomposition} is
 
 \begin{equation}
@@ -272,9 +273,13 @@ The RI decomposition has been used for a long time to reduce the
 scaling of quantum chemistry algorithms, for example, in the RI-MP2
 method.\cite{ayala1999linear, werner2003fast, izmaylov2008resolution} An 
 important caveat is that, however, keeping the dimension of the auxiliary 
-basis low, in this approximation one can only separate a pair of indices $p, r$ 
-from another pair $q, s$, but not $p, q$ from $r, s$. This is 
-apparent from the form of the form of the electron interaction operator:
+basis low, in this approximation one can only 
+separate a pair of indices $p, r$ 
+from another pair $q, s$ with negligible error, but not $p, q$ from $r, s$. 
+In the latter case the rank of RI has to be $r_{RI} = O(N^2)$ instead of 
+$r_{RI} = O(N)$ in the former case to provide equivalent error, and thus such 
+approximation would be not useful. Those properties of RI are 
+apparent from the form of the electron interaction operator:
 
 \begin{equation}
 %\begin{split}
@@ -296,8 +301,8 @@ distance $|r_{1} - r_{2}|$ is large. In contrast, this is not true for pairs
 $p, q$ and $r, s$.
 
 This limitation of RI decomposition does not allow cost reduction during the 
-calculation of some terms in the ${}^{2}T$ equation of RCCD. For example, the 
-evaluation of the intermediate of the form:
+calculation of several terms in the ${}^{2}T$ equation of RCCD. For example, 
+the evaluation of the intermediate of the form:
 \begin{equation}
  \tau^{ab}_{ij} = - T^{cd}_{ij}  V^{ab}_{cd}
 \end{equation}
@@ -348,7 +353,7 @@ CP decomposition.\cite{sorber2013optimization} Substantial effort has been made
 by the mathematical community to develop approaches for doing so. We refer the 
 reader to the corresponding reviews\cite{kolda2009tensor, 
 sidiropoulos2016tensor} for further details. Typical algorithms are the 
-alternating least squares,\cite{comon2009tensor} gradient descent by 
+alternating least squares (ALS),\cite{comon2009tensor} gradient descent by 
 means of the method of Broyden, Fletcher, Goldfarb, and Shanno 
 (BFGS), and nonlinear least squares (NLS) methods.\cite{sorber2013optimization}
 
@@ -381,14 +386,14 @@ following sequence of diagrams:
  As those diagrams suggest, THC can be calculated in two steps: first, RI of 
 the original tensor is calculated, and then CP decomposition of the three index 
 tensors is obtained by means of an optimization 
-algorithms.\cite{hohenstein_thc1} For the specific case of two electron 
-integrals Martinez \emph{et al.} developed non-iterative methods where fixed
-real-space quadratures were used in place of factors $W^{1}, W^{2}, W^{3}, 
-W^{4}$.\cite{hohenstein_thc3, hohenstein_cc2, parrish2013discrete} We also 
-implemented direct optimization methods for calculating THC using alternating 
-least squares and gradient descent in our work,\cite{schutski2017tensor} but 
-found them inferior to the two step approach originally described by Martinez 
-\emph{et al.}.\cite{hohenstein_thc1}
+algorithms.\cite{hohenstein_thc1} For the specific case of two 
+electron integrals Martinez \emph{et al.} developed faster non-iterative 
+methods where fixed real-space quadratures were used in place of factors $W^{1}, 
+W^{2}, W^{3}, W^{4}$.\cite{hohenstein_thc3, hohenstein_cc2, parrish2013discrete} 
+We also implemented direct optimization methods for calculating THC using 
+alternating least squares and gradient descent in our 
+work,\cite{schutski2017tensor} but found them inferior to the two step approach 
+originally described by Martinez \emph{et al.}.\cite{hohenstein_thc1}
 
 \subsection{Alternating Least Squares}
 Let us now describe a general optimization method, which can be applied to 
@@ -422,15 +427,15 @@ the square of the Frobenius norm of this tensor is a sum of its entries squared:
 Diagrammatically, this is
 %
 \begin{equation}
-%\vcenter{\hbox{\includegraphics[height=38mm]{figures/cost_function}}}.
+\vcenter{\hbox{\includegraphics[height=38mm]{figures/cost_function}}}.
 \label{fig:cost_function}
 \end{equation}
 %
-where we denoted conjugated by darker color. Clearly, the best possible THC 
-approximation to $V$ will correspond to a minimum of the cost function $f$.  
+where we denoted conjugated tensors by darker color. Clearly, the best possible 
+THC approximation to $V$ will correspond to a minimum of the cost function $f$. 
 Since $f$ is a real-valued analytic function, its derivatives with respect to 
 possibly complex factors $W \in \{W^1, W^2, W^3, W^4, X\}$ are related by
-$\frac{\partialf}{\partial W} = (\frac{\partial f}{\partial W^{\ast}})^{\ast}$.
+$\frac{\partial f}{\partial W} = (\frac{\partial f}{\partial W^{\ast}})^{\ast}$.
 
 In order to minimize the cost function, we proceed with the
 calculation of its gradient, which can be easily done using
@@ -438,18 +443,20 @@ diagram~\ref{fig:cost_function}.  The partial derivative of $f$ with
 respect to $W^1$ is
 %
 \begin{equation}
-%\vcenter{\hbox{\includegraphics[height=22mm]{figures/cost_function_dfdw1}}}
+\vcenter{
+\hbox{
+\includegraphics[width=0.8\textwidth]{figures/cost_function_dfdw1}}}
 \label{fig:cost_function_partial}
 \end{equation}
 %
-Likewise, partial derivatives with respect to other factors are 
-expressed by diagrams with those factors removed. Using the fact that 
+Likewise, partial derivatives of $f$ with respect to other factors are 
+expressed by similar diagrams with those factors removed. Using the fact that 
 $\frac{\partial f}{\partial W}$ is linear in $W^\ast$, we can contract all 
 factors around $W^\ast$ into an environment matrix $A$, as shown in 
-diagram~\ref{fig:least_squares_w1}, and set this partial derivative to zero:
+diagram~\ref{fig:least_squares_w1}, and set this derivative to zero:
 %
 \begin{equation}
-%\vcenter{\hbox{\includegraphics[height=24mm]{figures/least_squares_w1}}}
+\vcenter{\hbox{\includegraphics[width=0.6\textwidth]{figures/least_squares_w1}}}
 \label{fig:least_squares_w1}
 \end{equation}
 %
@@ -461,64 +468,67 @@ A \cdot W^\ast = B.
 \end{equation}
 %
 The solution to Eq.~\ref{eq:least_squares_w1} can be
-obtained by taking the inverse of $A$ (or a pseudoinverse, if $A$ is a
-rank-deficient matrix).  Finally, we arrive to an expression for 
-${W^{1}}^{\ast}$, which diagrammatrically is
+obtained by multiplying from the left by the inverse of $A$ (or a 
+pseudoinverse, if $A$ is a rank-deficient matrix).  Finally, we arrive to an 
+expression for ${W^{1}}^{\ast}$, which diagrammatrically is
 %
 \begin{equation}
-%\vcenter{\hbox{\includegraphics[height=20mm]{figures/least_squares_w1_sol}}}.
+\vcenter{
+\hbox{
+\includegraphics[width=0.4\textwidth]{figures/least_squares_w1_sol}}} .
 \label{fig:least_squares_w1_sol}
 \end{equation}
 %
-Let us estimate the cost of this procedure. If the size of the auxiliary 
-indices $\alpha, \alpha^{\prime}$ in the THC decomposition is $r_\mathrm{THC}$, 
-then the construction of the environment matrix $A$ scales as 
-$O(r_\mathrm{THC}^3)$, as does computing its generalized inverse. If each of 
-the dimensions of $V$ equals $N$, then the cost of calculating
-${W^1}^{\ast}$ scales as $O(N^4 \, r_\mathrm{THC})$. Updates for the
+Let us estimate the cost of this procedure. We call the size of the 
+auxiliary indices $\alpha, \alpha^{\prime}$ the rank of the THC 
+decomposition ($r_\mathrm{THC}$). The construction of the environment 
+matrix $A$ scales as $O(r_\mathrm{THC}^3)$, as does computing its generalized 
+inverse. If each of the dimensions of $V$ equals $N$, then the cost of 
+calculating ${W^1}^{\ast}$ scales as $O(N^4 \, r_\mathrm{THC})$. Updates for the
 rest of the terms in the THC decomposition can be calculated similarly.
 
 A simple iterative optimization algorithm can be built as follows.
 First, the THC factors $W$ are initialized randomly.  For each factor,
-an update is calculated as shown on
-diagram~\ref{fig:least_squares_w1_sol}, keeping the other factors
-fixed.  The process is iterated until convergence of the factors.  The
+an update is calculated as shown on diagram~\ref{fig:least_squares_w1_sol}, 
+keeping the other factors fixed.  The process is iterated until convergence of 
+the factors. We note that this procedure is, in fact, very similar to 
+partial gradient descent and the Gauss-Siedel method.\cite{yoon1988lower} The 
 resulting THC-ALS algorithm is listed below.
-%
-%\begin{algorithm}[H]
-%  \caption{Alternating Least Squares}\label{code:thc_als}
-%  \begin{algorithmic}[1] 
-%  \Function{thc-als}{$V, r_\mathrm{THC}, \epsilon$}
-%  \State $I_{1},I_{2},I_{3},I_{4} \gets$ size($V$)
-%  \State $W^1, W^2, W^3, W^4, X \gets$ init\_random($I_{1}, I_{2}, I_{3}, 
-%I_{4}, r_\mathrm{THC}$) 
-%  \Repeat \ForAll {$W \in \{W^1, W^2, W^3, W^4,
-%X\}$}
-%  \State $A_{W} \gets $ get\_environment($W^1, W^2, W^3, W^4, X$)
-%  \LineComment{$O(r_\mathrm{THC}^3)$}
-%  \State $B_{W} \gets $ get\_rhs($V,
-%   W^1, W^2, W^3, W^4, X$) \LineComment{$O(N^4 \, r_\mathrm{THC})$ or
-%$O(N^2 \, r_\mathrm{SVD} \, r_\mathrm{THC})$ with RI}
-%   \State $W_{new} \gets A^{-1} B$\Comment{$O(r_\mathrm{THC}^3)$}
-%   \EndFor
-%   \State $\Delta \gets \max_{W} \frac{\| W_{new} - W \|}{\|
-%W \|}$
-%   \State $W \gets W_{new}$ 
-%   \Until $\Delta > \epsilon$ 
-%   
-%   \Return $W^1, W^2, W^3, W^4, X$
-%    \EndFunction
-%  \end{algorithmic}
-%\end{algorithm}
+
+\begin{algorithm}[H]
+  \caption{Alternating Least Squares}\label{code:thc_als}
+  \begin{algorithmic}[1] 
+  \Function{thc-als}{$V, r_\mathrm{THC}, \epsilon$}
+  \State $I_{1},I_{2},I_{3},I_{4} \gets$ size($V$)
+  \State $W^1, W^2, W^3, W^4, X \gets$ init\_random($I_{1}, I_{2}, I_{3}, 
+I_{4}, r_\mathrm{THC}$) 
+  \Repeat \ForAll {$W \in \{W^1, W^2, W^3, W^4,
+X\}$}
+  \State $A_{W} \gets $ get\_environment($W^1, W^2, W^3, W^4, X$)
+  \LineComment{$O(r_\mathrm{THC}^3)$}
+  \State $B_{W} \gets $ get\_rhs($V,
+   W^1, W^2, W^3, W^4, X$) \LineComment{$O(N^4 \, r_\mathrm{THC})$ or
+$O(N^2 \, r_\mathrm{RI} \, r_\mathrm{THC})$ with RI}
+   \State $W_{new} \gets A^{-1} B$\Comment{$O(r_\mathrm{THC}^3)$}
+   \EndFor
+   \State $\Delta \gets \max_{W} \frac{\| W_{new} - W \|}{\|
+W \|}$
+   \State $W \gets W_{new}$ 
+   \Until $\Delta > \epsilon$ 
+   
+   \Return $W^1, W^2, W^3, W^4, X$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
 %
 The calculation of the right hand side of
 Eq.~\ref{eq:least_squares_w1} dominates in the cost of THC-ALS,
 scaling as $O(N^4 \, r_\mathrm{THC})$. A simple modification is
-possible to reduce this cost by one order of magnitude.  If an
-approximation to the singular vectors of the original tensor $V$ is
-available from the beginning, as in the case of electron interaction,
-it can be used in place of $V$, leading to a faster algorithm.  The
-diagram corresponding to Eq.~\ref{eq:least_squares_w1} then becomes
+possible to reduce the cost of this step by one order of magnitude. If an
+RI approximation to the original tensor $V$ is available from the beginning, as 
+in the case of electron interaction, it can be used in place of $V$, leading to 
+a faster algorithm. The diagram corresponding to 
+Eq.~\ref{eq:least_squares_w1} then becomes
 %
 \begin{equation}
 %\vcenter{\hbox{\includegraphics[height=20mm]{figures/least_squares_w1_sol_ri}}}
@@ -527,32 +537,19 @@ diagram corresponding to Eq.~\ref{eq:least_squares_w1} then becomes
 %
 The cost of the expression above scales as $O(N^2 \,
 r_\mathrm{RI} \, r_\mathrm{THC})$, because the contraction of a
-fourth-order tensor $V$ with matrices $W$ is replaced by contractions
-of two third-order tensors $U$ and $\tilde{U}$.  We only need to
+fourth-index tensor $V$ with matrices $W$ is replaced by contractions
+of two third-index tensors $U$ and $\tilde{U}$. We only need to
 modify the function $get\_rhs()$ to build a lower scaling algorithm,
 which we refer to as THC-ALS-RI.
 
-Alternating least squares algorithms are simple and often
-robust,\cite{uschmajew2012local} but may take a large number of
-iterations to converge.\cite{comon2009tensor} Following an analogy
-with CPD,\cite{sorber2013optimization}, we also implemented
-quasi-Newton method using limited memory BFGS (L-BFGS) with a dogleg
-trust region\cite{sorber2012unconstrained} for THC; this method we
-refer to as THC-BFGS.
+Alternating least squares algorithms are simple and 
+often robust,\cite{uschmajew2012local} but may take a large number of
+iterations to converge.\cite{comon2009tensor} Particularly, we found that 
+calculating THC decomposition with ALS directly is inferior than using a two 
+step scheme mentioned earlier.\cite{schutski2017tensor} Nevertheless, ALS 
+procedures can be derived for various decompositions, and are a cornerstone of 
+our tensor structured Coupled Cluster.
 
-The THC-ALS and THC-BFGS, and their RI variants, are
-novel direct methods to calculate the THC decomposition based on
-minimization of the Frobenius norm of the error.  Composite methods
-such as THC-CPD(ALS) and their RI variants have been used previously
-in earlier work on THC.\cite{hohenstein_thc1}
-
-We refer the reader to the supplementary material for
-optimized expressions of the THC gradient and objective function. Due
-to their complexity many of the equations we present (especially the
-ones related to coupled cluster, see
-Section~\ref{sec:tensor_structured_cc}) were generated by a computer
-algebra system developed in our group,%\cite{drudge1, drudge2}
-although this can be done by manipulating diagrams as well.
 
 
 
