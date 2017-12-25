@@ -305,6 +305,7 @@ calculation of several terms in the ${}^{2}T$ equation of RCCD. For example,
 the evaluation of the intermediate of the form:
 \begin{equation}
  \tau^{ab}_{ij} = - T^{cd}_{ij}  V^{ab}_{cd}
+ \label{eq:ccd_intermediate_example2}
 \end{equation}
 does not benefit from RI decomposition of $V$.
 \begin{equation}
@@ -328,8 +329,8 @@ cornerstone of our factorized CC approaches.
 
 
 \subsection{Canonical Polyadic Decomposition}
-The canonical polyadic decomposition of a tensor is a decomposition of the 
-form:\cite{de2006link}
+The canonical polyadic decomposition (CPD) of a tensor is a decomposition of 
+the form:\cite{de2006link}
 %
 \begin{equation}
 T_{pqr\ldots} = \sum_\alpha a_p^\alpha \, b_q^\alpha \,
@@ -337,7 +338,8 @@ c_r^\alpha \ldots
 \label{eq:cpd_definition}
 \end{equation}
 
-The CPD of a three index tensor is shown below diagrammatically.
+The dimension of the auxiliary index $\alpha$ is called the rank of the 
+decomposition. The CPD of a three index tensor is shown below diagrammatically.
 \begin{equation}
 \vcenter{\hbox{\includegraphics[width=0.4\textwidth]{figures/cp_decomposition}}}
 .
@@ -347,17 +349,65 @@ The CPD of a three index tensor is shown below diagrammatically.
 This factorization can be seen as one of the generalizations of classic 
 decompositions of matrices, such as QR, LU or Singular Value Decomposition, to 
 higher order tensors.\cite{kolda2009tensor} The important difference, is, 
-however, that no closed form algorithm to extract the CPD is known, and one has 
-to rely on iterative optimization techniques to calculate the 
-CP decomposition.\cite{sorber2013optimization} Substantial effort has been made 
-by the mathematical community to develop approaches for doing so. We refer the 
+however, that no closed form algorithm to extract the CPD for generic tensors 
+is known, and one has to rely on iterative optimization techniques to calculate 
+the CP decomposition.\cite{sorber2013optimization} 
+
+Substantial effort has been made by the mathematical community to develop 
+optimization techniques for CPD. We refer the 
 reader to the corresponding reviews\cite{kolda2009tensor, 
 sidiropoulos2016tensor} for further details. Typical algorithms are the 
 alternating least squares (ALS),\cite{comon2009tensor} gradient descent by 
 means of the method of Broyden, Fletcher, Goldfarb, and Shanno 
 (BFGS), and nonlinear least squares (NLS) methods.\cite{sorber2013optimization}
 
-\subsection{Tensor Hypercontraction}
+For a limited number of special tensors their CPD can be built analytically. 
+One such case are denominator tensors in the CC methods (see Eqn. 
+\ref{eq:cc_denom_definition}), which have the form
+\begin{equation}
+D^{ab\ldots}_{ij\ldots} = 
+\frac{1}{F_{a}^{a} + F_{b}^{b} + \ldots - F_{i}^{i} - 
+F_{j}^{j} - \ldots}
+\end{equation}
+CP decomposition of denominator tensors can be built using an exponential
+parameterization\cite{braess2005approximation} (which was known as Laplace
+transformation in quantum chemistry for a long 
+time\cite{almlof1991elimination}) as, for example,
+%
+\begin{subequations}
+\begin{align} {}^2D_{ij}^{ab} &= 
+\sum_{\omega} C_\omega \, \mathrm{e}^{A_\omega \,
+F_i^i} \, \mathrm{e}^{A_\omega \, F_j^j} \, \mathrm{e}^{-A_\omega \,
+F_a^a} \, \mathrm{e}^{-A_\omega \, F_b^b} \\ &= \sum_{\omega} {}^2D^1_{i,\omega} 
+\,
+{}^2D^2_{j,\omega} \, {}^2D^3_{a,\omega} \, {}^2D^4_{b,\omega}.
+\end{align}
+\end{subequations}
+%
+Quadrature weights $C_{w}$ and coefficients $A_{w}$ in this case can be 
+precomputed without the knowledge of the actual values of the Fock matrix $F$, 
+and provide very high accuracy of the CPD.\cite{braess2005approximation}
+
+Another important special case are very sparse tensors. A tensor $T$ having $r$
+non zero elements can be represented exactly by its trivial CPD of rank $r$, 
+which will take a form
+\begin{equation}
+T_{pqr\ldots} = \sum_{\alpha \in T_{pqr\ldots} \neq 0} T_{p^\alpha q^{\alpha} 
+r^{\alpha}\ldots} \cdot e^{1}_{p^{\alpha}} \, e^{2}_{q^\alpha} \, 
+e^{3}_{r^\alpha} \ldots
+\label{eq:trivial_cpd_dec}
+\end{equation}
+where $e^{n}_{p^{\alpha}}$ is a unit vector of the length of $n$-th dimension 
+of $T$ having $1$ in $p^{\alpha}$-th position, and $T_{pqr\ldots}$ is the non 
+zero element of $T$. Essentially, CPD in this case is a sum of rank-1 tensors 
+having $1$ in a specific entry and zeros everywhere else multiplied by the 
+value of the corresponding entry in $T$. This trivial decomposition may be 
+useful only if the number of non zero entries of $T$, and hence the rank of the 
+CPD, is small. However, it shows an intrinsic connection of the CPD and 
+sparsity.
+
+\subsection{Tensor Hyper Contraction}
+\label{sec:tensor_hypercontraction}
 The resolution of identity, which we considered before, can be combined with 
 the canonical decomposition. Indeed, if three-index tensors in RI are further 
 approximated by CPD one comes to a Tensor Hypercontraction introduced by 
@@ -385,15 +435,19 @@ following sequence of diagrams:
 \end{equation}
  As those diagrams suggest, THC can be calculated in two steps: first, RI of 
 the original tensor is calculated, and then CP decomposition of the three index 
-tensors is obtained by means of an optimization 
-algorithms.\cite{hohenstein_thc1} For the specific case of two 
-electron integrals Martinez \emph{et al.} developed faster non-iterative 
-methods where fixed real-space quadratures were used in place of factors $W^{1}, 
-W^{2}, W^{3}, W^{4}$.\cite{hohenstein_thc3, hohenstein_cc2, parrish2013discrete} 
-We also implemented direct optimization methods for calculating THC using 
-alternating least squares and gradient descent in our 
-work,\cite{schutski2017tensor} but found them inferior to the two step approach 
-originally described by Martinez \emph{et al.}.\cite{hohenstein_thc1}
+tensors is obtained by means of the 
+optimization algorithms.\cite{hohenstein_thc1}
+
+For the specific case of two electron integrals Martinez \emph{et al.} developed 
+fast non-iterative methods where fixed real-space quadratures were used in 
+place of factors $W^{1}, W^{2}, W^{3}, W^{4}$.\cite{hohenstein_thc3, 
+hohenstein_cc2, parrish2013discrete} This can be compared to obtaining CPD 
+analytically, as was mentioned in the previous section.
+
+We proposed direct optimization methods for calculating THC using 
+alternating least squares and gradient descent in 
+our work,\cite{schutski2017tensor} but found them inferior to the two step 
+approach originally described by Martinez \emph{et al.}.\cite{hohenstein_thc1}
 
 \subsection{Alternating Least Squares}
 Let us now describe a general optimization method, which can be applied to 
@@ -547,11 +601,140 @@ often robust,\cite{uschmajew2012local} but may take a large number of
 iterations to converge.\cite{comon2009tensor} Particularly, we found that 
 calculating THC decomposition with ALS directly is inferior than using a two 
 step scheme mentioned earlier.\cite{schutski2017tensor} Nevertheless, ALS 
-procedures can be derived for various decompositions, and are a cornerstone of 
+procedure can be derived for various decompositions, and is a cornerstone of 
 our tensor structured Coupled Cluster.
 
+\section{Tensor Structured Coupled Cluster}
+The ALS algorithm can be merged together with CC equations, leading 
+CC expressions with significantly lower computational cost, which are the main 
+achievement of our work.\cite{schutski2017tensor} The logic of deriving those 
+novel approaches follows the same route as in case of ALS method. Here, 
+we will use coupled cluster doubles (for which one neglects ${}^1\hat{T}$) as as 
+example, and THC decomposition of all four index tensors. This scheme, 
+however, is quite general, and we applied it to other decopositions and 
+coupled cluster methods, which is discussed in subsequent sections. 
 
+Let us impose the THC structure on the doubles amplitudes. We
+approximate the amplitude tensor ${}^{2}T$ with its THC decomposition
+${}^{2}\tilde{T}$ having rank $r_{T}$.  The difference between original and 
+approximated
+amplitudes is
+%
+\begin{equation} 
+\Delta_{T} = {}^{2}T - {}^{2}\tilde{T} = {}^{2}T -
+(Y^{2} \odot Y^{1}) \cdot Z \cdot (Y^{4} \odot Y^{3})^{T},
+\end{equation}
+%
+where $Y^{i}$ and $Z$ are factor matrices in the THC
+decomposition of ${}^{2}T$. As in case of ALS algorithm, we wish to minimize 
+the squared norm of the error tensor $\Delta_{T}$, which is the minimization of 
+the corresponding cost function $f_{T}$,
+%
+\begin{equation}
+f_{T} = |\Delta_{T}|^2 = ({}^{2}T^{\ast} -
+{}^{2}\tilde{T}^{\ast})({}^{2}T - {}^{2}\tilde{T}).
+\end{equation}
+%
+Setting partial derivatives of $f_{T}$ with respect to
+the decomposition factors to zero, we obtain a new set of equations
+%
+\begin{equation} 
+\frac{\partial f_{T}}{\partial Y} = - {}^{2}T^{\ast}
+\frac{\partial {}^{2} \tilde{T}}{\partial Y} + {}^{2}\tilde{T}^{\ast}
+\frac{\partial {}^{2} \tilde{T}}{\partial Y} = 0,
+\label{eq:cc_cost_function}
+\end{equation}
+%
+where $Y \in \{Y^{1}, Y^{2}, Y^{3}, Y^{4}, Z\}$. Again,
+as $f_{T}$ is real and analytic, only one set of derivatives (either
+with respect to $Y$ or $Y^{\ast}$) is sufficient to find its minimum.
 
+The amplitude equation in CCD method is:
+\begin{equation}
+{}^{2}T = {}^{2}D ~ {}^{2}G({}^{2}T), 
+\label{eq:ccd_amplitude_equation_short}
+\end{equation}
 
+We proceed by replacing ${}^2T^\ast$ in Eqn.~\ref{eq:cc_cost_function} with 
+${}^2D \, {}^2G$ from Eqn.~\ref{eq:ccd_amplitude_equation_short}. Effectively, 
+this corresponds to minimizing the difference between a decomposed tensor 
+${}^2\tilde{T}$ and a solution of the CCD amplitude equations. The resulting
+amplitude equations are:
+%
+\begin{equation}
+\tilde{T}^{\ast} \frac{\partial \tilde{T}}{\partial
+Y} = {}^{2}G {}^{2}D \frac{\partial \tilde{T}}{\partial Y}.
+\end{equation}
+%
+This is the analogue of Eq.~\ref{eq:least_squares_w1}
+in THC-ALS, and can be solved with the help of the pseudoinverse as the 
+left-hand-side is linear in $Y^\ast$.  Diagrammatically, we have
+%
+\begin{equation}
+\vcenter{\hbox{\includegraphics[width=0.6\textwidth]{figures/cc_thc}}}.
+\label{fig:cc_thc}
+\end{equation}
+%
+Note that the energy denominator ${}^2D$ is represented 
+here as an order-8 diagonal tensor ${}^2D^{aba^{\prime} b^{\prime}}_{ij 
+i^{\prime} j^{\prime}}$, instead of an order-4 dense tensor ${}^2D^{ab}_{ij}$ 
+as in Eq.~\ref{eq:ccd_amplitude_equation}. The final form of our ALS-type 
+coupled cluster doubles equations is provided below (an example for the factor 
+$Y^{1}$ is shown; expressions for other factors are analogous):
+%
+\begin{equation}
+\vcenter{\hbox{\includegraphics[width=0.4\textwidth]{figures/cc_thc_sol}}}.
+\label{fig:cc_thc_als}
+\end{equation}
+%
+
+Here ${}^2G$ on the right hand side is a collection of tensor contractions 
+involving the Hamiltonian and THC approximated ${}^2T$ amplitudes 
+(see Eqn.~\ref{eq:ccd_amplitude_equation} for the full list of these terms).
+We substitute electron interaction with its THC decomposition calculated 
+beforehand, for example, with ALS. The size of the auxiliary dimension in 
+this decomposition is $r_{V}$, and needs to be only of order $O(N)$ for a good 
+approximation, as was discussed previously in the section 
+\ref{sec:tensor_hypercontraction}. We also substitute the denominator tensor by 
+its CP decomposition obtained analytically by means of Laplace transformation. 
+The CP rank $r_{D}$ in this decomposition is a small constant $\sim 15$ and 
+does not depend on $N$. The final expressions, where all order-4 tensors are 
+substituted by their decompositions, factorize. After defining proper 
+intermediates, the cost of these equations has quartic scaling in $r_{V}$, 
+$r_{T}$ and $N$ per iteration. An example of such factorization for the 
+contraction we considered before in Eqn.~\ref{eq:ccd_intermediate_example2} is 
+shown below diagrammatically (we used dashed line to show an auxiliary 
+index in the CP decomposition of ${}^2 D$):
+\begin{equation}
+\begin{split}
+\tau^{ab}_{ij} & = {}^2 T^{cd}_{ij} V^{ab}_{cd} \\
+Y^{1 \ast} &\longleftarrow {}^1A^{-1} \cdot \tau \cdot {}^{2}D 
+\cdot \frac{\partial ({}^2\tilde{T})}{\partial Y^{1}}
+\end{split}
+\end{equation}
+
+%
+\begin{equation}
+\vcenter{\hbox{\includegraphics[width=0.95\textwidth]{figures/cc_thc_example}}}.
+\label{fig:cc_thc_example}
+\end{equation}
+%
+Although diagrams are convenient for explaining tensor factorizations, it 
+is still quite challenging to define good intermediates even for the 
+simplest CCD method. We derived factorized equations using an automated 
+algebraic system developed in our group.\cite{drudge1, drudge2} We refer the 
+reader to the supplementary material from Ref.~\cite{schutski2017tensor} for 
+the complete listing of those expressions for the THC decomposed CCSD method
+(denoted as RCCSD-THC), as well as their implementation in 
+Python.\cite{van2007python}
+
+Equation \ref{fig:cc_thc_als}, which represents is a combination of CC and ALS 
+update, is a cornerstone of the tensor structured Coupled Cluster method and 
+the main achievement of this work. This scheme is quite generic  
+and can be applied to any factorization of amplitudes and the Hamiltonian. In 
+the following sections we will discuss numerical experiments with some of those 
+novel methods.
+
+\section{RCCSD-THC method}
 \section{Appendix}
 \label{sec:Appendix} 
