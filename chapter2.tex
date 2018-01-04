@@ -721,14 +721,14 @@ Y^{1 \ast} &\longleftarrow {}^1A^{-1} \cdot \tau \cdot {}^{2}D
 %
 Although diagrams are convenient for explaining tensor factorizations, it 
 is still quite challenging to define good intermediates even for the 
-simplest CCD method. We derived factorized equations using an automated 
-algebraic system developed in our group.\cite{drudge1, drudge2} We refer the 
-reader to the supplementary material from Ref.~\cite{schutski2017tensor} for 
-the complete listing of those expressions for the THC decomposed CCSD method
-(denoted as RCCSD-THC), as well as their implementation in 
-Python.\cite{van2007python}
+simplest decomposed CCD method. We derived factorized equations using an 
+automated algebraic system developed in our group.\cite{drudge1, drudge2} We 
+refer the reader to the supplementary material from 
+Ref.~\cite{schutski2017tensor} for the complete listing of these expressions for 
+the THC decomposed CCSD method (denoted as RCCSD-THC), as well as their 
+implementation in Python.\cite{van2007python}
 
-Equation \ref{fig:cc_thc_als}, which represents is a combination of CC and ALS 
+Equation \ref{fig:cc_thc_als}, which represents a combination of CC and ALS 
 update, is a cornerstone of the tensor structured Coupled Cluster method and 
 the main achievement of this work. This scheme is quite generic  
 and can be applied to any factorization of amplitudes and the Hamiltonian. In 
@@ -736,5 +736,84 @@ the following sections we will discuss numerical experiments with some of those
 novel methods.
 
 \section{RCCSD-THC method}
+To test the performance of tensor structured coupled cluster, we 
+tested it on a set of small to medium size molecules. We 
+start with the RCCSD method, where both two body interaction part of the 
+Hamiltonian and ${}^2T$ amplitues have THC structure. Diagrammatically, this is 
+summarized as:
+%
+\begin{equation}
+%\vcenter{\hbox{\includegraphics[width=0.95\textwidth]{figures/rccsd_thc_def}}.
+\label{fig:rccsd_thc_def}
+\end{equation}
+%
+As diagrams show, two electron interaction is decomposed in Mulliken order, as 
+well as two body excitation amplitudes. This choice of decompositions results 
+in a procedure with a quartic cost in the basis size $N$ and the ranks of THC 
+decomposition.
+
+In our setup the decomposition of the electron interaction tensor was 
+calculated with a two step procedure, as described in 
+Ref.~\cite{schutski2017tensor} First, partial singular value decomposition of 
+the integrals in AO basis was calculated. We retained $r_{V}$ singular values 
+and vectors. For larger systems, listed in Tab.~\ref{Tab:Energies}, RI 
+decomposed two electron integrals were used in place of singular 
+vectors. Next, a CP decomposition of rank $r_{V}$ of the resulting 
+left and right singular vectors (arranged as three index tensors of size $N 
+\times N \times r_{v}$) was calculated with ALS. The iterative least squares 
+procedure was stopped when the ratio of the objective function $f$ to the square 
+of the Frobenius norm of the original tensor dropped below $10^{-14}$, or a 
+limit of 1000 iterations was reached.
+
+The subsequent coupled cluster calculations were stopped either after the 
+energy was converged to within $10^{-9}$ Hartree or a limit of 250 iterations 
+was reached. All calculations used the cc-pVDZ basis from EMSL
+database,\cite{schuchardt2007basis} and the corresponding cc-pVDZ-RI
+was used in the RI approximation. The threshold for pseudoinverses was set to 
+$10^{-10}$
+
+\subsection{Accuracy of THC for two electron integral approximation}
+The accuracy of the THC decomposition of the two-electron integrals governs the
+accuracy of the energy in subsequent calculations. Thus, it is important 
+wish to check the dependence on the error in the decomposition of
+two-electron integrals on THC rank.
+Figure~\ref{fig:thc_err_mo_3systems} plots this error in a double
+logarithmic scale for three small molecules.  We note that the
+decomposition is computationally useful if the rank $r_\mathrm{RHC}$
+is close to the number of basis functions $N$.  As the figure shows,
+the error in the two-electron integrals decays exponentially with
+respect to THC rank.  We found that this trend holds for every system
+tested and depends only slightly on whether the two-electron integrals
+are decomposed in the atomic orbital or molecular orbital basis.
+
+%
+\begin{figure}[tb]
+%\includegraphics[width=\columnwidth]{figures/thc_err_mo_3systems}
+\caption{Frobenius norm of error in decomposed two electron integrals.
+\label{fig:thc_err_mo_3systems}}
+\end{figure}
+%
+To see how the decomposition affects subsequent energies, we checked
+the error in the second-order M{\o}ller-Plesset (MP2) correlation
+energy, as shown in Fig.~\ref{fig:mp2_err_ao_full}.  The combination
+of MP2 and THC was first proposed by Hohenstein \emph{et
+al}.\cite{hohenstein_thc2} and scales as $O(N^4)$.  These authors used
+a version of THC with the restriction that all factors $W$ were the
+same, which we did not impose in our work. 
+The error in the MP2 correlation energy follows the trend seen in the
+decomposition of the two-electron integrals.  Results within $0.1~mH$
+of the exact MP2 correlation energy are already achieved with
+$r_\mathrm{THC} \sim N^{1.2} - N^{1.4}$.  We expect that the THC would
+work better for larger and more extended systems as the two-electron
+integrals become sparser and a lower rank decomposition would
+correspondingly become more accurate.
+%
+\begin{figure}[tb]
+%\includegraphics[width=\columnwidth]{figures/mp2_err_ao_full}
+\caption{Absolute error in the MP2 correlation energy.
+\label{fig:mp2_err_ao_full}}
+\end{figure}
+%
+
 \section{Appendix}
 \label{sec:Appendix} 
