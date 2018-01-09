@@ -272,14 +272,16 @@ as shown on the diagram below:
 The RI decomposition has been used for a long time to reduce the
 scaling of quantum chemistry algorithms, for example, in the RI-MP2
 method.\cite{ayala1999linear, werner2003fast, izmaylov2008resolution} An 
-important caveat is that, however, keeping the dimension of the auxiliary 
-basis low, in this approximation one can only 
+important caveat is that, however, that while keeping the dimension of the 
+auxiliary basis low, in this approximation one can only 
 separate a pair of indices $p, r$ 
 from another pair $q, s$ with negligible error, but not $p, q$ from $r, s$. 
 In the latter case the rank of RI has to be $r_{RI} = O(N^2)$ instead of 
-$r_{RI} = O(N)$ in the former case to provide equivalent error, and thus such 
-approximation would be not useful. Those properties of RI are 
-apparent from the form of the electron interaction operator:
+$r_{RI} = O(N)$ in the former case to provide equivalent accuracy. The 
+approximation in the last case would be not useful, because RI factors would 
+contain almost the same number of elements as the original tensor. Those 
+properties of RI are apparent from the form of the electron interaction 
+operator:
 
 \begin{equation}
 %\begin{split}
@@ -295,7 +297,7 @@ dr_{1} dr_{2} \\
 %\end{split}
 \label{eq:ri_decomposition_integral}
 \end{equation}
-As Eqn.~\ref{eq:ri_decomposition_integral} shows a separation of variables 
+As Eqn.~\ref{eq:ri_decomposition_integral} shows, a separation of variables 
 between a pair of basis functions $p, r$ and $q, s$ is possible when the 
 distance $|r_{1} - r_{2}|$ is large. In contrast, this is not true for pairs 
 $p, q$ and $r, s$.
@@ -312,8 +314,8 @@ does not benefit from RI decomposition of $V$.
 \vcenter{\hbox{\includegraphics[width=0.8\textwidth]{figures/cc_contraction_3}}}
 .
 \end{equation}
-Further approximations, however, can lead to reduced scaling, as we will show 
-later.
+Further approximations, however, can lead to lower cost of this expression, 
+as we will show later.
 
 \section{Tensor decompositions}
 As was noted before, simple RI approximation may not always be flexible enough 
@@ -329,7 +331,7 @@ cornerstone of our factorized CC approaches.
 
 
 \subsection{Canonical Polyadic Decomposition}
-The canonical polyadic decomposition (CPD) of a tensor is a decomposition of 
+The polyadic decomposition of a tensor is a decomposition of 
 the form:\cite{de2006link}
 %
 \begin{equation}
@@ -339,7 +341,12 @@ c_r^\alpha \ldots
 \end{equation}
 
 The dimension of the auxiliary index $\alpha$ is called the rank of the 
-decomposition. The CPD of a three index tensor is shown below diagrammatically.
+decomposition. As the rank is increased, this decomposition can approximate an 
+arbitrary tensor with any given precision. The factorization with the lowest 
+possible rank is called canonical polyadic decomposition (CPD), but we would 
+omit this detail and call CPD any decomposition of the form shown in 
+Eq.~\ref{eq:cpd_definition}. The CPD of a three index tensor is shown below 
+diagrammatically.
 \begin{equation}
 \vcenter{\hbox{\includegraphics[width=0.4\textwidth]{figures/cp_decomposition}}}
 .
@@ -348,10 +355,10 @@ decomposition. The CPD of a three index tensor is shown below diagrammatically.
 %
 This factorization can be seen as one of the generalizations of classic 
 decompositions of matrices, such as QR, LU or Singular Value Decomposition, to 
-higher order tensors.\cite{kolda2009tensor} The important difference, is, 
-however, that no closed form algorithm to extract the CPD for generic tensors 
-is known, and one has to rely on iterative optimization techniques to calculate 
-the CP decomposition.\cite{sorber2013optimization} 
+higher order tensors.\cite{kolda2009tensor} The important 
+difference, is, however, that no closed form algorithm to extract the CPD for 
+generic tensors is known, and one has to rely on iterative optimization 
+techniques to calculate the CP decomposition.\cite{sorber2013optimization} 
 
 Substantial effort has been made by the mathematical community to develop 
 optimization techniques for CPD. We refer the 
@@ -385,8 +392,9 @@ F_a^a} \, \mathrm{e}^{-A_\omega \, F_b^b} \\ &= \sum_{\omega} {}^2D^1_{i,\omega}
 \end{subequations}
 %
 Quadrature weights $C_{w}$ and coefficients $A_{w}$ in this case can be 
-precomputed without the knowledge of the actual values of the Fock matrix $F$, 
-and provide very high accuracy of the CPD.\cite{braess2005approximation}
+precomputed without the knowledge of the individual values of the Fock matrix 
+diagonal $F$, and provide very high accuracy of the 
+CPD.\cite{braess2005approximation}
 
 Another important special case are very sparse tensors. A tensor $T$ having $r$
 non zero elements can be represented exactly by its trivial CPD of rank $r$, 
@@ -399,12 +407,12 @@ e^{3}_{r^\alpha} \ldots
 \end{equation}
 where $e^{n}_{p^{\alpha}}$ is a unit vector of the length of $n$-th dimension 
 of $T$ having $1$ in $p^{\alpha}$-th position, and $T_{pqr\ldots}$ is the non 
-zero element of $T$. Essentially, CPD in this case is a sum of rank-1 tensors 
-having $1$ in a specific entry and zeros everywhere else multiplied by the 
-value of the corresponding entry in $T$. This trivial decomposition may be 
-useful only if the number of non zero entries of $T$, and hence the rank of the 
-CPD, is small. However, it shows an intrinsic connection of the CPD and 
-sparsity.
+zero element of $T$. Essentially, CPD in this case is a weighted sum of rank-1 
+tensors having $1$ in a specific entry and zeros everywhere else with 
+weights corresponding to the values of non-zeros entries in $T$. This trivial 
+decomposition may be useful only if the number of non zero entries of $T$, and 
+hence the rank of the CPD, is small. This particular way of building the 
+decomposition shows an intrinsic connection of the CPD and sparsity.
 
 \subsection{Tensor Hyper Contraction}
 \label{sec:tensor_hypercontraction}
@@ -731,9 +739,9 @@ implementation in Python.\cite{van2007python}
 Equation \ref{fig:cc_thc_als}, which represents a combination of CC and ALS 
 update, is a cornerstone of the tensor structured Coupled Cluster method and 
 the main achievement of this work. This scheme is quite generic  
-and can be applied to any factorization of amplitudes and the Hamiltonian. In 
-the following sections we will discuss numerical experiments with some of those 
-novel methods.
+and can be applied to any combination of the factorizations of amplitudes and 
+the Hamiltonian. In the following sections we will discuss numerical experiments 
+with some of those novel methods.
 
 \section{RCCSD-THC method}
 To test the performance of tensor structured coupled cluster, we 
@@ -749,7 +757,7 @@ summarized as:
 %
 As diagrams show, two electron interaction is decomposed in Mulliken order, as 
 well as two body excitation amplitudes. This choice of decompositions results 
-in a procedure with a quartic cost in the basis size $N$ and the ranks of THC 
+in a procedure with quartic cost in the basis size $N$ and the ranks of THC 
 decomposition.
 
 In our setup the decomposition of the electron interaction tensor was 
@@ -770,16 +778,15 @@ energy was converged to within $10^{-9}$ Hartree or a limit of 250 iterations
 was reached. All calculations used the cc-pVDZ basis from EMSL
 database,\cite{schuchardt2007basis} and the corresponding cc-pVDZ-RI
 was used in the RI approximation. The threshold for pseudoinverses was set to 
-$10^{-10}$
+$10^{-10}$.
 
 \subsection{Accuracy of THC for two electron integral approximation}
 The accuracy of the THC decomposition of the two-electron integrals governs the
-accuracy of the energy in subsequent calculations. Thus, it is important 
-wish to check the dependence on the error in the decomposition of
-two-electron integrals on THC rank.
-Figure~\ref{fig:thc_err_mo_3systems} plots this error in a double
-logarithmic scale for three small molecules.  We note that the
-decomposition is computationally useful if the rank $r_\mathrm{RHC}$
+accuracy of the energy in subsequent calculations. Thus, it is important to 
+check the dependence on the error in the decomposition of
+two-electron integrals on THC rank. Figure~\ref{fig:thc_err_mo_3systems} plots 
+this error in a double logarithmic scale for three small molecules.  We note 
+that the decomposition is computationally useful if the rank $r_\mathrm{RHC}$
 is close to the number of basis functions $N$.  As the figure shows,
 the error in the two-electron integrals decays exponentially with
 respect to THC rank.  We found that this trend holds for every system
