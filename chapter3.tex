@@ -1,8 +1,8 @@
 \chapter{THC-RCCSD method
-\label{sec:THC-RCCSD}}
+\label{ch:THC-RCCSD}}
 
 \section{Introduction}
-In this section we present the first application of our tensor structured 
+In this chapter we present the first application of our tensor structured 
 coupled cluster theory. We start with the RCCSD method, where both two body 
 interaction part of the Hamiltonian and ${}^2T$ amplitudes have THC structure. 
 This combination of decompositions results in a procedure with quartic cost in 
@@ -20,7 +20,8 @@ Diagrammatically, our choice of decompositions in THC-RCCSD can be summarized
 as:
 %
 \begin{equation}
-%\vcenter{\hbox{\includegraphics[width=0.95\textwidth]{figures/rccsd_thc_def}}.
+\vcenter{\hbox{\includegraphics[width=0.9\textwidth]{figures/rccsd_thc_def}}}
+.
 \label{fig:rccsd_thc_def}
 \end{equation}
 %
@@ -29,6 +30,7 @@ well as two body excitation amplitudes. To study the properties of THC-RCCSD
 we calculated energies of a set of small to medium size weakly correlated 
 molecules.
 
+\section{Computational details}
 In our setup the decomposition of the electron interaction tensor was 
 calculated with a two step method, as described in 
 Ref.~\cite{schutski2017tensor} First, partial singular value decomposition of 
@@ -51,6 +53,11 @@ was reached. All calculations used the cc-pVDZ basis from EMSL
 database,\cite{schuchardt2007basis} and the corresponding cc-pVDZ-RI
 was used in the RI approximation. The threshold for pseudoinverses was set to 
 $10^{-10}$.
+
+Our code was written in MATLAB\cite{matlab} and used Gaussian\cite{gaussian} 
+for the calculation of two electron integrals and Hartree Fock solutions. We 
+also used Tensorlab\cite{vervliettensorlab} to calculate CPD in the 
+decomposition of two electron integrals.
 
 \section{Accuracy of THC for two electron integral approximation}
 The accuracy of the THC decomposition of the two-electron integrals governs the
@@ -154,58 +161,98 @@ in the first step of THC decomposition of the two electron integrals.
 \begin{center}
 \begin{table}[h]
 \caption{CCSD correlation energies ($E_c$), errors in
-correlation energies ($\Delta E_c$), number of THC-RCCSD iterations 
-($n_{iter}$) 
+correlation energies ($\Delta E_c$) 
 and the norm of doubles residuals ($|{}^2R_{ij}^{ab}|$) for several small 
 molecules.
-\label{Tab:Energies}}
-\begin{tabular}{lccccccc}
-& & \multicolumn{2}{c}{$\Delta E_c (mH)$} & \multicolumn{2}{c}{$n_{iter}$} & 
+\label{tab:energies}}
+\begin{tabular}{lccccc}
+\hline \hline
+& & \multicolumn{2}{c}{$\Delta E_c (mH)$} & 
 \multicolumn{2}{c}{$|{}^2R_{ij}^{ab}|$}\\
-\cline{3-4} \cline{5-6} \cline{7-8} System & $E_c (mH)$ & $N_\mathrm{RI}$ &
-$1.5 \, N_\mathrm{RI}$ & $N_\mathrm{RI}$ &
+\cline{3-4} \cline{5-6} System & $E_c (mH)$ & $N_\mathrm{RI}$ &
 $1.5 \, N_\mathrm{RI}$ & $N_\mathrm{RI}$ &
 $1.5 \, N_\mathrm{RI}$\\
 \hline
-Acetic acid & -666.510 & -0.579 & -0.453 & 50 & 31 & 0.041 & 0.033 \\
-Aniline & -997.193 & -1.177 & -0.471 & 111 & 64 & 0.051 & 0.032 \\
-Diboron tetrafluoride & -909.944 & -0.702 & -0.716 & 15 & 17 & 0.053 & 0.034\\
-Benzene & -823.101 & -0.985 & -0.450 & 111 & 62 & 0.048 & 0.030\\
-Butadiene & -581.340 & -0.710 & -0.274 & 41 & 42 & 0.041 & 0.025\\
-Cyclobutane & -621.099 & -0.895 & -0.290 & 77 & 50 & 0.039 & 0.028\\
-Dimethylsulfoxide & -661.870 & 0.195 & -0.624 & 287 & 39 & 0.056 & 0.025\\
-Furan & -736.463 & -0.865 & -0.454 & 73 & 50 & 0.046 & 0.033\\
-Isobutane & -652.505 & -0.876 & -0.263 & 78 & 49 & 0.035 & 0.025\\
-Methylformate & -666.805 & -0.586 & -0.455 & 62 & 35 & 0.042 & 0.032\\
-Methylnitrite & -708.990 & -0.476 & -0.492 & 68 & 47 & 0.047 & 0.033\\
-Phenol & -1005.727 & -0.887 & -0.514 & 120 & 59 & 0.051 & 0.032\\
-Pyridine & -842.453 & -1.045 & -0.475 & 104 & 61 & 0.047 & 0.032\\
-Pyrrole & -727.051 & -0.855 & -0.407 & 84 & 52 & 0.045 & 0.032\\
-Thiophene & -695.593 & -1.013 & -0.657 & 97 & 52 & 0.039 & 0.032\\
-Toluene & -980.030 & -1.270 & -0.461 & & & &\\
+Acetic acid & -666.510 & -0.579 & -0.453 & 0.041 & 0.033 \\
+Aniline & -997.193 & -1.177 & -0.471 & 0.051 & 0.032 \\
+Diboron tetrafluoride & -909.944 & -0.702 & -0.716 & 0.053 & 0.034\\
+Benzene & -823.101 & -0.985 & -0.450 & 0.048 & 0.030\\
+Butadiene & -581.340 & -0.710 & -0.274 & 0.041 & 0.025\\
+Cyclobutane & -621.099 & -0.895 & -0.290 & 0.039 & 0.028\\
+Dimethylsulfoxide & -661.870 & 0.195 & -0.624 & 0.056 & 0.025\\
+Furan & -736.463 & -0.865 & -0.454 & 0.046 & 0.033\\
+Isobutane & -652.505 & -0.876 & -0.263 & 0.035 & 0.025\\
+Methylformate & -666.805 & -0.586 & -0.455 & 0.042 & 0.032\\
+Methylnitrite & -708.990 & -0.476 & -0.492 & 0.047 & 0.033\\
+Phenol & -1005.727 & -0.887 & -0.514 & 0.051 & 0.032\\
+Pyridine & -842.453 & -1.045 & -0.475 & 0.047 & 0.032\\
+Pyrrole & -727.051 & -0.855 & -0.407 & 0.045 & 0.032\\
+Thiophene & -695.593 & -1.013 & -0.657 & 0.039 & 0.032\\
+Toluene & -980.030 & -1.270 & -0.461 & 0.063 & 0.042\\
 \hline
-MUE\footnote{mean unsigned error} & & 0.820 & 0.466 & & & &\\
-Max\footnote{maximum unsigned error} & & 1.270 & 0.716 & & & &\\
-RMS\footnote{root-mean-square error} & & 0.861 & 0.482 & & & &\\
+MUE\footnote{mean unsigned error} & & 0.820 & 0.466 & &\\
+Max\footnote{maximum unsigned error} & & 1.270 & 0.716 & &\\
+RMS\footnote{root-mean-square error} & & 0.861 & 0.482 & &\\
+\hline\hline
 \end{tabular}
 \end{table}
 
 \end{center}
 %
-Let us highlight an important finding in 
-Table~\ref{Tab:Energies}. As THC-RCCSD is an approximation to regular CC 
-equations, the full residuals may not be zero, because the number of CC 
-equations is usually much larger than the number of parameters of THC-RCCSD. 
-An interesting observation is that despite the norm of 
-doubles residuals is not negligible in THC-RCCSD, the error in energy 
+As the table shows, already with moderate ranks of order of the basis size 
+excellent accuracy is attained (differences are below $1 \mathrm{mH}$). The 
+error of the approximation decreases as we increase the rank. Let us 
+also point to an important finding in Table~\ref{tab:energies}. As THC-RCCSD is 
+an approximation to regular CC equations, the full residuals may not be zero, 
+because the number of CC equations is usually much larger than the number of 
+parameters of THC-RCCSD. An interesting observation is that despite the norm of 
+double residuals is not negligible in THC-RCCSD, the error in energy 
 is quite low. This contrasts with conventional CC, where the 
 difference of energy during iterations with the converged value  
 is of the same order as the norm of the residual. This fact is explored in 
 more detail in the next chapter. 
 
-Overall, THC-RCCSD provides a viable approximation to conventional RCCSD and 
-should be orders of magnitude faster per iteration, especially for large basis 
-sizes $N$. It should be noted, however, that most of the time in our 
+\section{Convergence of THC-RCCSD}
+Finally, let us discuss the convergence of the THC-RCCSD. In this 
+work we used a simple iterative algorithm to solve THC-RCCSD equations, 
+and stopped iterations when a specified difference in energy between subsequent 
+steps was reached. The convergence of the resulting algorithm significantly 
+depends on the rank of the THC approximation. 
+Figure~\ref{fig:cc_thc_convergence} shows the number of iterations the 
+algorithm had to take to reach $\theta = 1\cdot 10^{6} H$ difference in energy.
+%
+\begin{figure}[tb]
+%\includegraphics[width=\columnwidth]{figures/niter_vs_logr}
+\caption{Number of iterations of THC-RCCSD to reach $1 \cdot 10^{-6} H$ 
+difference in energy}
+\label{fig:cc_thc_convergence}
+\end{figure}
+%
+For small as well as larger THC ranks the convergence of THC-RCCSD is 
+comparable or better than regular RCCSD (if solved by simple iterations). 
+In the intermediate regime, however, the algorithm may need
+a large number of iterations or fails to converge. We note that the 
+convergence in this regime significantly depends on the choice of initial 
+parameters. This behavior can possibly be explained by the fact that THC-RCCSD 
+in our formulation is a sum of two iterative algorithms, merely, an ALS step and 
+a CC iteration. These two parts of THC-RCCSD can generate competing updates, 
+depending on the magnitude of the rank. In case of small ranks the update 
+should be mostly determined by ALS, as ${}^{2}T$ amplitudes are poorly 
+approximated with any set of parameters $Y$. In contrast, with larger ranks 
+mostly CC step dominates the update, because ${}^2T$ is well 
+approximated at each step. We admit, however, that the means to control 
+convergence of our hybrid algorithms may need a further study. All of the 
+calculations in Table~\ref{tab:energies} were done in a regime where THC-RCCSD 
+performs similarly to regular RCCSD, e. g. where THC ranks are relatively 
+large. 
+
+\section{Conclusions}
+The development of the THC-RCCSD method is our first application of the tensor 
+structured coupled cluster approach.\cite{schutski2017tensor} THC-RCCSD provides 
+a viable approximation to conventional RCCSD and should be orders of magnitude 
+faster per iteration, especially for large basis sizes $N$. 
+
+It should be noted, however, that most of the time in our 
 calculations was spent on the decomposition of the Hamiltonian rather
 than on the solution of approximated CC equations. 
 One way to overcome this problem is to use quadrature based methods for 
@@ -217,38 +264,10 @@ accuracy.\cite{parrish2013discrete} Another way is to avoid THC decomposition
 of two electron integrals altogether, as is described in the next 
 chapter.
 
-\section{Convergence of THC-RCCSD}
-Finally, let us discuss the convergence of the THC-RCCSD. In this 
-work we used a simple iterative algorithm to solve THC-RCCSD equations, 
-and stoped iterations when a specified difference in energy between subsequent 
-steps was reached. The convergence of the resulting algorithm significantly 
-depends on the rank of the THC approximation. 
-Figure~\ref{fig:cc_thc_convergence} shows the number of iterations the algoritm 
-had to take to reach $\theta = 1\cdot 10^{6} H$ difference in energy.
-%
-\begin{figure}[tb]
-%\includegraphics[width=\columnwidth]{figures/niter_vs_logr}
-\caption{Number of iterations of THC-RCCSD to reach $1 \cdot 10^{-6} H$ 
-difference in energy}
-\label{fig:cc_thc_convergence}
-\end{figure}
-%
-For small as well as larger THC ranks the convergence of THC-RCCSD is 
-comparable or better than regular RCCSD (if simple iterations were used). In 
-the intermediate regime, however, the algorithm may need
-a large number of iterations to converge. We note that the convergence in this 
-regime significantly depended on the choice of initial parameters and several 
-random trials needed to find good ones. We provide the following tentative 
-explanation to the observed behavior. As 
-THC-RCCSD in our formulation is a sum of two iterative algorithms, merely, an 
-ALS step and a CC iteration, there is a competition between 
-updates each of these parts is generating. In case of small ranks the update 
-should be mostly determined by ALS, as ${}^{2}T$ amplitudes are poorly 
-approximated with any set of parameters $Y$. In 
-contrast, with larger ranks mostly CC equations govern the update, because 
-${}^2T$ is well approximated at each step. We admit, however, that the means to 
-control convergence of our hybrid algorithms 
-need a further study. All later numerical experiments were done in a regime 
-where THC-RCCSD performs similarly to regular RCCSD, e. g. where THC ranks are 
-relatively large. 
-
+An important aspect not covered in our work on THC-RCCSD is its behavior 
+in strong correlation regime. As was mentioned earlier, conventional restricted 
+CC methods fail at strong correlation. Our approximate CC methods, however, 
+alleviate this problem by providing qualitatively correct solutions, as will be 
+shown in Chapter~\ref{ch:CPD-RCCSD}. While not being useful for practical 
+calculations, this property of our approximate CC may help to further improve 
+future CC algorithms.
