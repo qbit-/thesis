@@ -13,18 +13,20 @@ computational cost scaling only quartically in the system size.
 
 First, we extend the application of the Projected Hartree-Fock (PHF)
 method, which provides an effective description of electron correlation both 
-near and far from the equilibrium. To make it practical for chemical 
-simulations, energy derivatives and dipole moments need to be evaluated.
-We derive analytical energy gradients for the single-reference PHF theory 
-and use it to calculate equilibrium geometries and harmonic frequencies of 
-sizable molecules.
+near and far from the equilibrium. PHF is a simplest of a family of 
+computational methods, which work effectively in the challenging to simulate 
+strong correlation regime, while rigorously preserving physical symmetries of 
+the solution. To make PHF usable for practical simulations, however, energy 
+derivatives and dipole moments need to be evaluated. We derive analytical 
+energy gradients for the single-reference PHF theory and use it to calculate 
+equilibrium geometries and harmonic frequencies of sizable molecules.
 
-A way to systematically improve the PHF method is to increase the number of 
-reference states in the calculation. The resulting approach may reach exact 
-solution, but is much more demanding numerically. Fortunately, numerically 
-intensive parts of the multi-reference PHF can be effectively 
-parallelized on modern computers. We implemented parallel multi-reference PHF 
-and present simulations of very large Hubbard systems. 
+%A way to systematically improve the PHF method is to increase the number of 
+%reference states in the calculation. The resulting approach may reach exact 
+%solution, but is much more demanding numerically. Fortunately, numerically 
+%intensive parts of the multi-reference PHF can be effectively 
+%parallelized on modern computers. We implemented parallel multi-reference PHF 
+%and present simulations of very large Hubbard systems. 
  
 Our second line of work is a family Coupled Cluster methods, often considered 
 a "gold standard" of quantum chemistry. We show how to reduce the 
@@ -34,10 +36,10 @@ We demonstrate the accuracy of our low-cost approach by benchmark
 calculations on various organic molecules.
 
 An interesting property of our new Tensor Structured Coupled Cluster is the 
-ability to cure the failure of the original Coupled Cluster far from 
-equilibrium geometries, or in strong correlation regime. We illustrate this by 
-simulations of molecular dissociation and Hubbard systems. Lastly, we discuss 
-the extension of our scheme to other methods in the Coupled Cluster family. 
+ability to cure the failure of the original Coupled Cluster 
+in strong correlation regime. We illustrate this by simulations of molecular 
+dissociation and Hubbard systems. Lastly, we discuss the extension of our scheme 
+to other methods in the Coupled Cluster family. 
  
 \end{abstract}
 

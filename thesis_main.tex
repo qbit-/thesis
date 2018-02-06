@@ -2,13 +2,21 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{latexsym}
-\usepackage{graphics}
+\usepackage{subcaption} % for subfigures with separate captions
+\usepackage{graphicx}
 \usepackage{epsfig,epsf,rotating}
-\usepackage{subfigure}
 \usepackage{color}
 \usepackage{epsf}
+
 \usepackage{algorithm} % for the algorithm environment
-\usepackage{algpseudocode}
+\usepackage{algpseudocode} % for the algorithm environment
+
+\usepackage{color} % For comments in color
+\usepackage[normalem]{ulem} % For struck-out lines
+\usepackage{footnote} % footnotes in text
+%\usepackage{bracket} % expectation values
+\usepackage[font={it}]{caption} % customizes the style of captions
+
 \usepackage{theorem}
 \newtheorem{proposition}{Proposition}
 
@@ -20,6 +28,7 @@
 {\theoremstyle{plain}
   \theorembodyfont{\rmfamily}  \newtheorem{Def}{Definition}[chapter]}
 
+\usepackage{hyperref} % for interactive links. This always is loaded last
 % new commands.
 \algnewcommand{\LineComment}[1]{\State\(\triangleright\) #1}
 % Comments for the whole line
@@ -50,20 +59,22 @@ correlation}
    %\makecover
    \maketitle
    \include{abstract}
-   %\include{ack}
+   \include{acknowledgements}
    \tableofcontents
    \listoffigures
    \listoftables
-%   \include{ded}
+   \include{preface}
   \end{frontmatter}
 \pagenumbering{arabic}
 
 \linespacing{1.7}
 
-\include{chapter1}
-\include{chapter2}
-\include{chapter3}
-\include{chapter4}
+\include{introduction}
+\include{phf_gradients}
+\include{tcc_theory}
+\include{thc_rccsd}
+\include{cpd_rccsd}
+\include{tcc_strong_correlation}
 \appendix
 
 %\include{append-a}
