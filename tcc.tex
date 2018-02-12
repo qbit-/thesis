@@ -4,6 +4,17 @@ The discussion presented in this section is based on our published work, see
 Ref.~\cite{schutski2017tensor}, and also on several new results intended for 
 another publication.
 
+In this chapter we will discuss in more detail the steep scaling of coupled 
+cluster. To remedy this scaling we use the concept of tensor decompositions, and 
+we will review several relevant decompositions 
+in Sections~\ref{sec:canonical_decomposition} and 
+\ref{sec:tensor_hypercontraction}. A general way to optimize tensor 
+decompositions in mentioned in Section~\ref{sec:als}. 
+Section~\ref{sec:tcc_derivation} explains how we can combine tensor 
+decompositions with coupled cluster. The last section is an 
+appendix introducing the diagrammatic notation we use to schematically display 
+our main results.
+
 \section{Tensor Contractions and the Cost of Coupled Cluster}
 Our goal here is to improve the very steep cost of the coupled 
 cluster method. The numerical cost of CC methods lies in solving amplitude 
@@ -76,11 +87,11 @@ D_{\alpha,\alpha^{\prime}} \tilde{U}_{qs}^{\alpha^{\prime}},
 Here $U$ and $\tilde{U}$ are three index-integrals and $D$ is a generalized 
 overlap.\cite{ahmadi1995coulomb}. The resolution of identity can be 
 seen as a singular value or an eigenvalue decomposition of the 
-interaction tensor. If tensor $V^{pq}_{rs}$ is reshaped into a matrix with 
-combined indices $pr$ and $qs$, then three index tensors $U$ and $\tilde{U}$ are 
-its singular vectors (or eigenvectors), and $D$ is a diagonal matrix of 
-singular values (or eigenvalues). The RI decomposition, however, does not 
-enforce in general that $U$ and $\tilde{U}$ are orthogonal or that $D$ is 
+interaction tensor. The tensor $V^{pq}_{rs}$ can be seen as matrix 
+$V(pr, qs)$ with combined indices $pr$ and $qs$. The three index tensors $U$ and 
+$\tilde{U}$ are its singular vectors (or eigenvectors), and $D$ is a diagonal 
+matrix of singular values (or eigenvalues). The RI decomposition, however, does 
+not enforce in general that $U$ and $\tilde{U}$ are orthogonal or that $D$ is 
 diagonal.
 
 The accuracy of the decomposition in Eqn.~\ref{eq:ri_decomposition}
@@ -109,12 +120,14 @@ as shown on the diagram below:
 The RI decomposition has been used for a long time to reduce the
 scaling of quantum chemistry algorithms, for example, in the RI-MP2
 method.\cite{ayala1999linear, werner2003fast, izmaylov2008resolution} A 
-significant caveat is, however, that while keeping the dimension of the 
-auxiliary basis low, one can only 
-separate a pair of indices $p, r$ 
-from another pair $q, s$ with good accuracy, but not $p, q$ from $r, s$. 
-In the latter case the rank of RI has to be $r_{RI} = O(N^2)$ instead of 
-$r_{RI} = O(N)$ to provide equivalent accuracy. The approximation in the last 
+significant caveat is, however, that indices of $V^{pq}_{rs}$ can be 
+separated by RI only in a specific order. If $V$ is seen as a matrix 
+$V(pr, qs)$, which we refer to as Mulliken order, then pairs of 
+indices $pr$ and $qs$ can be separated with good accuracy at low rank 
+$r_{RI}$. In contrast, if we cast $V$ into a matrix 
+$V(pq,rs)$, which we refer to as Dirac order, and try to separate
+$pq$ from $rs$, then the rank of RI has to be $r_{RI} = O(N^2)$ to provide 
+equivalent accuracy. The approximation in the last 
 case would be not useful, because RI factors would contain almost the same 
 number of elements as the original tensor. Those 
 properties of RI are apparent from the form of the electron interaction 
@@ -171,7 +184,8 @@ tensor diagrams. Another important aspect is the alternating least squares
 method (ALS), as it can be used to calculate \emph{any} of the described 
 decompositions and is a cornerstone of our factorized CC approaches.
 
-\subsection{Canonical Polyadic Decomposition}
+\subsection{Canonical Polyadic Decomposition
+\label{sec:canonical_decomposition}}
 An $n$-dimensional tensor can always be produced as a result of the direct 
 product of $n$ vectors. In the simplest case of the three dimensional tensor 
 with one vector per each dimension we would have:
@@ -296,13 +310,13 @@ trivial decomposition may be useful only if the number of non-zero entries of
 $T$, and hence the rank of the CPD, is small. The particular way this trivial 
 CPD is built shows an intrinsic connection of the CPD and sparsity.
 
-\subsection{Tensor Hypercontraction}
-\label{sec:tensor_hypercontraction}
+\subsection{Tensor Hypercontraction
+\label{sec:tensor_hypercontraction}}
 The resolution of identity, which we considered before, can be combined with 
-canonical decomposition. If the three-index tensors in RI are further 
-approximated by CPD one comes to a Tensor Hypercontraction (THC) introduced by 
-Martinez \emph{et al.}\cite{hohenstein_thc1, hohenstein_thc2, hohenstein_thc3}
-The THC is a decomposition of fourth order tensors of the form:
+canonical decomposition. If the three-index tensors in RI 
+are further approximated by CPD one comes to a Tensor Hypercontraction (THC) 
+introduced by Martinez \emph{et al.}\cite{hohenstein_thc1, hohenstein_thc2, 
+hohenstein_thc3} The THC is a decomposition of fourth order tensors of the form:
 \begin{equation}
 \begin{split} V_{pqrs} & = \sum_{\alpha \beta} W^{1}_{p,\alpha} W^{2}_{q, 
 \alpha}
@@ -327,6 +341,9 @@ of the original tensor is calculated, and then CP decomposition of the
 three-index tensors is obtained by means of optimization 
 algorithms. Finally, the factors without external indices (open lines) 
 are contracted together to produce the THC.\cite{hohenstein_thc1}
+Let us also note that the order of indices affects the accuracy of THC in the 
+same way as in case of RI. We use Mulliken ordering for all THC decomposed 
+tensors in this work. 
 
 For the specific case of two electron integrals Martinez \emph{et al.} developed 
 fast non-iterative methods where fixed real-space quadratures were used in 
@@ -339,7 +356,8 @@ least squares and gradient descent in our work,\cite{schutski2017tensor} but
 found them inferior to the two step approach originally described by Martinez 
 \emph{et al.}.\cite{hohenstein_thc1}
 
-\subsection{Alternating Least Squares}
+\section{Alternating Least Squares
+\label{sec:als}}
 Let us now describe a general optimization method, which can be applied to 
 calculate several tensor decompositions. We will show its derivation for the 
 optimization of THC as was done in our original work,\cite{schutski2017tensor} 
@@ -501,7 +519,8 @@ step scheme mentioned earlier.\cite{schutski2017tensor} Nevertheless, the ALS
 procedure can be derived for various decompositions, and is a cornerstone of 
 our tensor structured coupled cluster.
 
-\section{Tensor Structured Coupled Cluster}
+\section{Tensor Structured Coupled Cluster
+\label{sec:tcc_derivation}}
 The ALS algorithm can be merged together with CC equations, leading to
 CC expressions with significantly lower computational cost, which are the main 
 achievement of our work.\cite{schutski2017tensor} The logic of deriving those 

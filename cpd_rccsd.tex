@@ -26,6 +26,16 @@ are:
 \label{fig:rccsd_cpd_def}
 \end{equation}
 %
+The index based form of the factorizations we used is:
+\begin{equation}
+ \begin{aligned}
+   V^{pq}_{rs} \approx \sum_{\alpha, \beta} U_{pr, \alpha} D_{\alpha, \beta} 
+\tilde{U}_{qs, \beta} \\
+ {}^2T^{ab}_{ij} \stackrel{def}{=} \sum_{\mu} Y^{1}_{a \mu} Y^{2}_{b 
+\mu} W^{3}_{i \mu} W^{4}_{j \mu}
+ \end{aligned}
+\end{equation}
+
 Following the procedure described in Chapter~\ref{ch:tcc}, we derived 
 an ALS-like update rule for the factors $Y \in \{Y^{1}, Y^{2}, Y^{3}, Y^{4}\}$. 
 We call this method CPD-RCCSD. 
@@ -111,10 +121,10 @@ in the RI decomposition of the Hamiltonian.
 %
 \begin{center}
 \begin{table}[!ht]
-\caption{CCSD correlation energies ($E_c$), errors in
-correlation energies ($\Delta E_c$)
-and the norm of doubles residuals ($|{}^2R_{ij}^{ab}|$) for several small 
-molecules.
+\caption{Tests of the accuracy of CPD-RCCSD. CCSD correlation energies ($E_c$), 
+errors in correlation energies ($\Delta E_c$)
+and the norm of doubles residuals ($|{}^2R_{ij}^{ab}|$) for several molecular 
+systems.
 \label{tab:energies_cpd_rccsd}}
 \begin{tabular}{lccccccc}
 \hline \hline

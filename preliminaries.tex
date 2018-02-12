@@ -702,7 +702,7 @@ possible. For closed shell systems as we used in this work, we can
 realize significant computational savings by using the property that our 
 orbitals are doubly occupied. This assumption also guarantees that we preserve 
 a proper spin symmetry in our restricted CC wavefunction. The drawback of this 
-ansatz is that the restricted Hartree-Fock wavefunction $\Psi_{0}$ 
+ansatz is that the restricted Hartree-Fock wavefunction $|\Psi_{0}\rangle$ 
 will become degenerate when energy levels of opposite spin 
 electrons become equivalent. This degeneracy (or strong correlation)
 will cause a failure of the restricted CC methods, which we will address at the 
@@ -738,7 +738,7 @@ The ${}^2 T$ residual equation has the following form:
 + {}^{2}T^{ac}_{ik}  V^{bk}_{cj} 
 + {}^{2}T^{ac}_{ki}  V^{bk}_{jc} 
 + {}^{2}T^{ac}_{kj}  V^{bk}_{ci} 
-+ {}^{2}T^{bc}_{jk}  V^{ak}_{ci}\\
++ {}^{2}T^{cb}_{kj}  V^{ak}_{ci}\\
 &+ {}^{2}T^{bc}_{ki}  V^{ak}_{cj} 
 + {}^{2}T^{bc}_{kj}  V^{ak}_{ic}
 - 2 \cdot {}^{2}T^{ac}_{ik}  V^{bk}_{jc}
@@ -826,31 +826,59 @@ theory, and allows one to calculate MP2 energies as a byproduct of the coupled
 cluster procedure. Coupled cluster, however, is usually superior to the 
 perturbation theory methods. 
 
-Solving the amplitude equations is computationally demanding, and determines 
-the very steep cost of the CC approach. The evaluation of 
-the right hand side of Eq. \ref{eq:ccd_amplitude_equation_short} requires 
-$O(N^6)$ summations and multiplications per iteration, hence the RCCD method 
-has $O(N^6)$ cost. The root of this problem is the need to perform summations 
-involving fourth order tensors representing the interaction $V$ and 
-excitation amplitudes. This problem, however, can be circumvented by using 
-novel techniques of tensor decompositions coming from multilinear 
-algebra,\cite{kolda2009tensor} as we will demonstrate in the next chapter.
+So far we introduced the simplest coupled cluster model and have shown a way to 
+find cluster amplitudes. All calculations done in this work also included 
+single excitations in the cluster operator, although we use a simpler RCCD 
+approach to describe our approximate CC methods in Chapter~\ref{ch:tcc}. A more 
+general RCCSD method is briefly explained in the next section.
 
 \subsection{Restricted Coupled Cluster Singles and Doubles (RCCSD)
 \label{sec:preliminaries_rccsd}}
 While being the simplest Coupled Cluster method to implement, RCCD does not 
 offer very high accuracy. The inclusion of single excitations in the cluster 
-operator in RCCSD method improves the precision by accounting for the 
-relaxation effects in the reference determinant. The energy expression in 
-RCCSD contains contributions from singles amplitudes:
+operator improves the precision by accounting for the 
+relaxation effects in the reference determinant. The RCCSD method is quite 
+accurate, especially if large basis sets are used. Typical errors in predicted 
+bond lengths are of order of $0.5$ pm~\cite{coriani2005accuracy}, and the 
+reaction enthalpies are usually accurate up to $\sim 10$ 
+kJ/mol~\cite{bak2000accuracy}.
+
+The energy expression in RCCSD contains contributions from singles amplitudes:
 %
 \begin{equation}
-  E = E_{0} - {}^{2}T^{ab}_{ij}  V^{ij}_{ba} + 2 \cdot   
-{}^{2}T^{ab}_{ij}  V^{ij}_{ab}  - {}^{1}T^{a}_{i}  
-{}^{1}T^{b}_{j}  V^{ij}_{ba}   + 2 {}^{1}T^{a}_{i}  
-{}^{1}T^{b}_{j}  V^{ij}_{ab}   + 2 F^{i}_{a}  {}^{1}T^{a}_{i}
+E = E_{0} + {}^{2}T^{ab}_{ij} \cdot(2 \cdot  
+V^{ij}_{ab} - V^{ij}_{ba})  + 2 F^{i}_{a}  {}^{1}T^{a}_{i} 
++ {}^{1}T^{a}_{i} ({}^{1}T^{b}_{j}) \cdot (2 \cdot V^{ij}_{ab} - 
+V^{ij}_{ba})   
 \end{equation}
 %
+The amplitude equations in RCCSD are analogous to RCCD and can be found in 
+Ref.~\cite{shavitt2009many}. We will not list these equations here 
+due to their length. Symbolically, the amplitude equations are
+\begin{subequations}
+\begin{equation}
+{}^{1}T_{i}^{a} = {}^{1}D_{i}^{a} ~ {}^{1}G_{i}^{a} \\
+\end{equation}
+\begin{equation}
+{}^{2}T_{ij}^{ab} = {}^{2}D_{ij}^{ab} ~ {}^{2}G_{ij}^{ab}
+\label{eq:ccsd_amplitude_equation_short}
+\end{equation}
+\end{subequations}
+
+Where  ${}^{1}D_{i}^{a} = \frac{1}{F_{a}^{a} - F_{i}^{i}}$, ${}^{1}G$ is 
+the right hand side in singles residual equation, and other terms are 
+analogous to RCCD. The doubles right hand side ${}^{2}G$ in RCCSD contains all 
+terms present in RCCD plus additional terms contributed by singles.
+
+Solving the doubles amplitude equations is computationally demanding, 
+and determines the very steep cost of RCCD and RCCSD approaches. The evaluation 
+of the right hand side of Eq. \ref{eq:ccsd_amplitude_equation_short} requires 
+$O(N^6)$ summations and multiplications per iteration, hence the RCCSD method 
+has $O(N^6)$ cost. The root of this problem is the need to perform summations 
+involving fourth order tensors representing the interaction $V$ and 
+excitation amplitudes. This problem, however, can be circumvented by using 
+novel techniques of tensor decompositions coming from multilinear 
+algebra,\cite{kolda2009tensor} as we will demonstrate in the next chapter.
 
 \section{Solvable models
 \label{sec:hubbard_hamiltonian}}
@@ -887,5 +915,5 @@ weakly correlated, while as $u / t$ grows the solutions of the model may be
 strongly correlated. The simulation of the Hubbard Hamiltonian is usually done 
 at half-filling, e.g. when the total number of electrons equals the number of 
 sites. At half-filling $N$ one particle configurations are degenerate at $\eta 
->> 1$, which leads to strong correlation. We refer the reader to 
+>> 0$, which leads to strong correlation. We refer the reader to 
 Ref.~\cite{essler2005one} for a complete review of the Hubbard model.

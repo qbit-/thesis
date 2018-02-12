@@ -1,6 +1,6 @@
-\chapter*{Conclusions and outlook
+\chapter{Conclusions and outlook
 \label{ch:conclusions}}
-In this work new approximate coupled cluster methods were developed. Our 
+In this work two new approximate coupled cluster methods were developed. Our 
 approach is based on tensor decompositions, which are alternative 
 representations of high dimensional tensors ubiquitous in post-Hartree-Fock 
 theories. After an introduction into the theory of coupled cluster is done, we 
@@ -11,11 +11,11 @@ with the help of tensor diagrams and discuss techniques to cast different
 index-based tensors into CPD and THC forms. 
 
 While higher order tensors are approximated with tensor decompositions, the 
-decisive quantity is the length of the expansion (the rank). The scaling of 
+decisive quantity is the length of the expansion (the rank). The cost of 
 tensor contractions with decomposed tensors depends on the form of the 
 decomposition, the rank(s) $r$ and the basis size $N$. We 
 demonstrate that intermediates in coupled cluster can be calculated at 
-cost scaling as the fourth power of $r$ and $N$. The discussion culminates by 
+cost scaling as the 4-th power of $r$ and $N$. The discussion culminates by 
 the derivation of a general tensor structured coupled cluster method using THC 
 factorization as an example. In our approach the Alternating Least Squares 
 procedure is combined with the coupled cluster update to produce a new 
@@ -33,22 +33,22 @@ THC factorized amplitudes, we demonstrate that only small ranks of order
 $N^{1.3}$ are needed for the sub-mHartree accuracy of the resulting THC-RCCSD 
 method. Provided these findings, the overall scaling of THC-RCCSD is of order 
 $O(N^{5})$ for sub-mHartree accuracy, whereas the original RCCSD method has 
-$O(N^{6})$ computational cost. The method is tested on a large set of medium 
-sized organic molecules.   
+$O(N^{6})$ computational cost. The method is tested on a large set of organic 
+molecules.   
 
 We then introduce another combination of tensor decompositions to approximate 
 RCCSD. The two-body interaction is represented in a standard RI form, 
 while cluster amplitudes are treated in CPD format. The resulting CPD-RCCSD 
 procedure again has a quartic cost in the ranks and basis, but also is superior 
-to the THC based method due to the use of the fast RI factorization. We prove 
+to the THC-based method due to the use of the fast RI factorization. We prove 
 that the sub-mHartree accuracy is obtained with ranks of order $O(N^{1.3})$, 
 and hence the overall cost of CPD-RCCSD is similar to THC-RCCSD. We found that 
 the accuracy of CPD-RCCSD is around $5$ times lower than that of THC-based 
-method, but the number of parameters is much less and scales only linearly 
-with rank and $N$. Overall, CPD-RCCSD presents a faster and simpler alternative 
-to THC-RCCSD. 
+method with the same rank, but the number of parameters is much less and 
+scales only linearly with rank and $N$. Overall, CPD-RCCSD presents a faster and 
+simpler alternative to THC-RCCSD. 
 
-Lastly, we have demonstrated that the failure of coupled cluster in strong 
+Finally, we have demonstrated that the failure of coupled cluster in strong 
 correlation regime can be mitigated by using low rank decompositions of 
 cluster amplitudes. We argue that low-rank approximations provide a way to 
 regularize ill-posed residual equations and draw analogies from methods 
@@ -60,6 +60,10 @@ Tensor structured coupled cluster can be directly applied to unrestricted or
 generalized coupled cluster theories. The mentioned methods work for strongly 
 correlated molecular systems at the expense of breaking the spin symmetry of 
 the wavefunction. CPD-RCCSD can be directly generalized to the higher orders of 
-coupled cluster theory, for example CCSDT. Finally, the regularizing effect of 
-low-rank amplitudes calls for the study of other regularization methods in the 
+coupled cluster theory, for example CCSDT, CCSDTQ, CCSDTQ5, where much larger 
+numerical savings may be obtained. Additionally, the techniques we describe 
+can be used in other CC-like approaches, such as the perspective polynomial 
+similarity transformation methods.\cite{degroote2016polynomial, 
+gomez2017attenuated} Finally, the regularizing effect of 
+low-rank amplitudes calls for the study of regularization methods in the 
 coupled cluster approach.

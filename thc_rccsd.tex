@@ -1,10 +1,18 @@
 \chapter{Applications of Tensor Structured Coupled Cluster
 \label{ch:app_tcc}}
+In this chapter we will present results for our tensor structured CC approach. 
+We introduce present two approximate CC methods based on different tensor 
+factorizations. Section~\ref{sec:thc_rccsd} discusses what we call THC-RCCSD, 
+and was the subject of Ref.~\cite{schutski2017tensor}. 
+Section~\ref{sec:cpd_rccsd} discusses a newer development we call CPD-RCCSD. 
+Finally, the Section~\ref{sec:strong_correlation} shows how tensor structured 
+coupled cluster can be used to remedy deficiencies of CC for strongly correlated 
+problems.
 
 \section{THC-RCCSD method
 \label{sec:thc_rccsd}}
 \subsection{Introduction}
-In this chapter we present the first application of our tensor structured 
+In this section we present the first application of our tensor structured 
 coupled cluster theory. We start with the RCCSD method, where both the two body 
 interaction part of the Hamiltonian and the ${}^2T$ amplitudes have THC 
 structure. Note that ${}^2T$ is never built as a four index tensor, but is 
@@ -20,8 +28,18 @@ can be summarized as:
 \label{fig:rccsd_thc_def}
 \end{equation}
 %
-As the diagrams show, the two electron interaction is decomposed in Mulliken 
-order, as well as the two body excitation amplitudes. To study the 
+The index-based form of these decompositions is:
+\begin{equation}
+\begin{aligned}
+ V^{pq}_{rs} \approx \sum_{\alpha, \beta} W^{1}_{p \alpha} W^{2}_{r \alpha} 
+X_{\alpha \beta} W^{3}_{q \beta} W^{4}_{s \beta} \\
+ {}^2T^{ab}_{ij} \stackrel{def}{=} \sum_{\mu \nu} Y^{1}_{a \mu} Y^{2}_{i 
+\mu} Z_{\mu \nu} W^{3}_{b \nu} W^{4}_{j \nu}
+\end{aligned}
+\end{equation}
+
+As both forms show, the two-electron interaction is decomposed in Mulliken 
+order, as well as the two-body excitation amplitudes. To study the 
 properties of THC-RCCSD we calculated energies of a set of small to medium size 
 molecules.
 
@@ -72,7 +90,7 @@ of errors in different bases is close to one.
 %
 \begin{figure}[tb]
 \includegraphics[width=\columnwidth]{figures/thc_rccsd/thc_err_mo_3systems}
-\caption{Frobenius norm of error in THC decomposed two-electron integrals, 
+\caption{Frobenius norm of error in THC decomposed two-electron integrals in 
 atomic orbital basis as the function of rank $r_{V}$
 \label{fig:thc_err_mo_3systems}}
 \end{figure}
@@ -199,10 +217,10 @@ in the first step of THC decomposition of the two electron integrals.
 %
 \begin{center}
 \begin{table}[!ht]
-\caption{CCSD correlation energies ($E_c$), errors in
-correlation energies ($\Delta E_c$) 
-and the norm of doubles residuals ($|{}^2R_{ij}^{ab}|$) for several small 
-molecules.
+\caption{Tests of the accuracy of THC-RCCSD. CCSD correlation energies ($E_c$), 
+errors in correlation energies ($\Delta E_c$) and the norm of doubles residuals 
+($|{}^2R_{ij}^{ab}|$) for several  
+molecular systems. 
 \label{tab:energies_thc_rccsd}}
 \begin{tabular}{lccccc}
 \hline \hline
