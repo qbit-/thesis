@@ -5,13 +5,13 @@
 \label{sec:thc_rccsd}}
 \subsection{Introduction}
 In this chapter we present the first application of our tensor structured 
-coupled cluster theory. We start with the RCCSD method, where both two body 
-interaction part of the Hamiltonian and ${}^2T$ amplitudes have THC structure.
-Note that ${}^2T$ is never built as a four index tensor, but is rather optimized 
-in a decomposed form. This combination of decompositions results in a 
-procedure with quartic cost in the basis size $N$ and the ranks of THC 
-approximation. Diagrammatically, our choice of decompositions in THC-RCCSD can 
-be summarized as:
+coupled cluster theory. We start with the RCCSD method, where both the two body 
+interaction part of the Hamiltonian and the ${}^2T$ amplitudes have THC 
+structure. Note that ${}^2T$ is never built as a four index tensor, but is 
+rather optimized in a decomposed form. This combination of decompositions 
+results in a procedure with quartic cost in the basis size $N$ and the ranks of 
+THC approximation. Diagrammatically, our choice of decompositions in THC-RCCSD 
+can be summarized as:
 %
 \begin{equation}
 \vcenter{\hbox{\includegraphics[width=0.9\textwidth]
@@ -20,18 +20,18 @@ be summarized as:
 \label{fig:rccsd_thc_def}
 \end{equation}
 %
-As diagrams show, two electron interaction is decomposed in Mulliken order, as 
-well as two body excitation amplitudes. To study the 
+As the diagrams show, the two electron interaction is decomposed in Mulliken 
+order, as well as the two body excitation amplitudes. To study the 
 properties of THC-RCCSD we calculated energies of a set of small to medium size 
 molecules.
 
 \subsection{Computational details}
 In our setup the decomposition of the electron interaction tensor was 
 calculated with a two step method, as described in 
-Ref.~\cite{schutski2017tensor} First, partial singular value decomposition of 
+Ref.~\cite{schutski2017tensor} First, a partial singular value decomposition of 
 the integrals in AO basis was calculated. We retained $r_{V}$ singular values 
 and vectors. For larger systems, listed in Tab.~\ref{tab:energies_thc_rccsd}, 
-RI decomposed two electron integrals were used in place of singular 
+RI-decomposed two-electron integrals were used in place of singular 
 vectors. Next, a CP decomposition of rank $r_{V}$ of the resulting 
 left and right singular vectors (arranged as three index tensors of size $N 
 \times N \times r_{V}$) was calculated with ALS. The iterative least squares 
@@ -39,20 +39,20 @@ procedure was stopped when the ratio of the objective function $f$ to the
 square of the Frobenius norm of the original tensor dropped below $10^{-14}$, or 
 a limit of 1000 iterations was reached.
 
-In the subsequent coupled cluster calculations we chose the rank of THC 
+In the subsequent coupled cluster calculations we chose the rank of the THC 
 decomposition of ${}^2T$ amplitudes ($r_{T}$) to be equal to the rank 
 used in approximating integrals, e.g. $r_{T} = r_{V}$. 
 The CC iterations were stopped either after the energy was converged to within 
 $10^{-9}$ Hartree or a limit of 250 iterations 
-was reached. All calculations used the cc-pVDZ basis from EMSL
+was reached. All calculations used the cc-pVDZ basis from the EMSL
 database,\cite{schuchardt2007basis} and the corresponding cc-pVDZ-RI
 was used in the RI approximation. The threshold for pseudoinverses was set to 
 $10^{-10}$.
 
-Our code was written in MATLAB and used Gaussian software\cite{gaussian} 
-for the calculation of two electron integrals and Hartree Fock solutions. We 
-also used Tensorlab\cite{vervliettensorlab} to calculate CPD in the 
-decomposition of two electron integrals.
+Our code was written in MATLAB and used Gaussian software~\cite{gaussian} 
+for the calculation of two-electron integrals and Hartree Fock solutions. We 
+also used Tensorlab~\cite{vervliettensorlab} to calculate CPD in the 
+decomposition of two-electron integrals.
 
 \subsection{Accuracy of THC for two electron integral approximation}
 The accuracy of the THC decomposition of the two-electron integrals governs the
@@ -72,15 +72,16 @@ of errors in different bases is close to one.
 %
 \begin{figure}[tb]
 \includegraphics[width=\columnwidth]{figures/thc_rccsd/thc_err_mo_3systems}
-\caption{Frobenius norm of error in decomposed two electron integrals, atomic 
-orbital basis.
+\caption{Frobenius norm of error in THC decomposed two-electron integrals, 
+atomic orbital basis as the function of rank $r_{V}$
 \label{fig:thc_err_mo_3systems}}
 \end{figure}
 %
 \begin{figure}[tb]
 \includegraphics[width=\columnwidth]{figures/thc_rccsd/thc_err_ao_vs_mo}
-\caption{Frobenius norm of error in decomposed two electron integrals of Acetic 
-Acid in atomic and molecular orbital bases.
+\caption{Frobenius norm of error in THC decomposed two-electron integrals of 
+Acetic Acid in atomic orbital and molecular orbital bases as the function of 
+rank $r_{V}$
 \label{fig:thc_err_ao_vs_mo}}
 \end{figure}
 %
@@ -103,13 +104,14 @@ decomposition would correspondingly become more accurate.
 %
 \begin{figure}[tb]
 \includegraphics[width=\columnwidth]{figures/thc_rccsd/mp2_err_ao_full}
-\caption{Absolute error in the MP2 correlation energy.
+\caption{Absolute error in the MP2 correlation energy as the function of rank 
+$r_{V}$, H
 \label{fig:mp2_err_ao_full}}
 \end{figure}
 %
 \subsection{Accuracy of THC-RCCSD}
-We are up to evaluate the accuracy the THC-decomposed RCCSD
-method. Note that we set the rank in the decomposition of amplitudes 
+We are now ready to evaluate the accuracy of the THC-decomposed RCCSD
+method. Recall that we set the rank in the decomposition of amplitudes 
 equal to the rank used in the decomposition of two electron integrals. The 
 error in the RCCSD correlation energy has a non-monotonic dependence on THC 
 rank, but follows the 
@@ -120,7 +122,9 @@ N^{1.2} - N^{1.4}$.
 %
 \begin{figure}[tb]
 \includegraphics[width=\columnwidth]{figures/thc_rccsd/cc_err_ao_full}
-\caption{Absolute error in the RCCSD correlation energy.
+\caption{Absolute error in the RCCSD correlation energy as the function of 
+ranks of THC decomposed ${}^2T$ amplitudes and two-electron integrals 
+$r_{T} = r_{V}$, H
 \label{fig:cc_err_ao_full}}
 \end{figure}
 %
@@ -130,15 +134,15 @@ calculated the correlation energy with converged THC-RCCSD amplitudes but exact
 two-electron integrals.  As Fig.~\ref{fig:cc_err_ao_full_amps_only}
 shows, using the exact two-electron integrals substantially decreases the error 
 in energy, which later motivated us to look for better ways of decomposing the 
-two electron integrals. The non-monotonic behavior of the error (as compared to 
+two-electron integrals. The non-monotonic behavior of the error (as compared to 
 MP2) can be attributed to the nonlinear nature of the coupled cluster 
 equations, which can be quite sensitive to changes in the parameters of the 
 Hamiltonian.
 %
 \begin{figure}[tb]
 \includegraphics[width=\columnwidth]{figures/thc_rccsd/cc_err_ao_full_amps_only}
-\caption{Absolute error in the RCCSD correlation energy with exact two
-electron integrals.
+\caption{Absolute error in the RCCSD correlation energy with exact two-electron 
+integrals and THC decomposed ${}^2T$ amplitudes as a function of rank $r_{T}$, H
 \label{fig:cc_err_ao_full_amps_only}}
 \end{figure}
 %
@@ -149,7 +153,7 @@ solve THC-RCCSD equations, and stopped updates when a specified difference in
 energy between subsequent steps was reached. The convergence of the resulting 
 method significantly depends on the rank of the THC approximation. 
 Figure~\ref{fig:cc_thc_convergence} shows the number of iterations the 
-algorithm had to take to reach $1\cdot 10^{6} ~ \mathrm{H}$ difference 
+algorithm had to take to reach $10^{6} ~ \mathrm{H}$ difference 
 in energy between steps.
 %
 \begin{figure}[tb]
@@ -160,28 +164,27 @@ difference in energy between updates}
 \end{figure}
 %
 For small as well as larger THC ranks the convergence of THC-RCCSD is 
-comparable or better than regular RCCSD (if solved by simple iterations). 
+comparable or better than regular RCCSD (if solved by simple iteration). 
 In the intermediate regime, however, the algorithm may need
 a large number of iterations or fails to converge. We note that the 
 convergence in this regime significantly depends on the choice of initial 
 parameters. This behavior can possibly be explained by the fact that THC-RCCSD 
-in our formulation is a sum of two iterative algorithms, merely, an ALS step 
+in our formulation is a sum of two iterative algorithms, namely, an ALS step 
 and 
 a CC iteration. These two parts of THC-RCCSD can generate competing updates, 
 depending on the magnitude of the rank. In case of small ranks the update 
 should be mostly determined by ALS, as ${}^{2}T$ amplitudes are poorly 
 approximated with any set of parameters $Y$. In contrast, with larger ranks 
-mostly CC step dominates the update, because ${}^2T$ is well 
+mostly the CC step dominates the update, because ${}^2T$ is well 
 approximated at each step. We admit, however, that the means to control 
-convergence of our hybrid algorithms may need a further study. All of the 
+convergence of our hybrid algorithms may need further study. All of the 
 calculations in Table~\ref{tab:energies_thc_rccsd} were done in a regime where 
-THC-RCCSD 
-performs similarly to regular RCCSD, e. g. where THC ranks are relatively 
-large. 
+THC-RCCSD performs similarly to regular RCCSD, e. g. where THC ranks are 
+relatively large. 
 
 \subsection{{THC-RCCSD for weakly correlated systems}
 \label{sec:thc_weakly_correlated}}
-Having checked the properties of THC-RCCSD on few small systems, we 
+Having checked the properties of THC-RCCSD on a few small systems, we 
 tested the method on a larger set of small and medium-sized molecules introduced 
 in previous work on THC.\cite{hohenstein_thc3} Technical details of the 
 calculations, including molecular geometries and reference energies, are 
@@ -232,17 +235,16 @@ root-mean-square error & & 0.861 & 0.482 & &\\
 \hline\hline
 \end{tabular}
 \end{table}
-
 \end{center}
 %
-As the table shows, already with moderate ranks of order of the basis size 
+As the table shows, already with moderate ranks on the order of the basis size 
 excellent accuracy is attained (differences are below $1 ~ \mathrm{mH}$). The 
 error of the approximation decreases as we increase the rank. Let us 
 also point to an important finding in Table~\ref{tab:energies_thc_rccsd}. As 
 THC-RCCSD is an approximation to regular CC equations, the full residuals may 
 not be zero, because the number of CC equations is usually much larger than the 
-number of parameters of THC-RCCSD. An interesting observation is that despite 
-the norm of double residuals is not negligible in THC-RCCSD, the errors in 
+number of parameters of THC-RCCSD. An interesting observation is that while 
+the norm of the double residuals is not negligible in THC-RCCSD, the errors in 
 energy are quite low. This contrasts with conventional CC, where the 
 difference of energy during iterations with the converged value  
 is of the same order as the norm of the residual. This fact is explored in 
@@ -258,15 +260,17 @@ It should be noted, however, that most of the time in our
 calculations was spent on the decomposition of the Hamiltonian rather
 than on the solution of approximated CC equations. 
 One way to overcome this problem is to use quadrature based methods for 
-building THC, such as the ones developed by the group of 
-Martinez~\cite{hohenstein_thc1},\cite{parrish2013discrete}. These 
+building THC of the electron interaction tensor, such as the ones developed by 
+the group of Martinez.\cite{hohenstein_thc1},\cite{parrish2013discrete} These 
 methods may be much faster than iterative approaches we employed, at the 
 expense of using about 3x larger ranks to reach the same 
 accuracy.\cite{parrish2013discrete} Another way is to avoid THC decomposition 
-of two electron integrals altogether, as we did in the next
-chapter.
+of two electron integrals altogether, as we will do in the next
+section.
 
 An important aspect not covered in our work on THC-RCCSD here is its behavior 
-in strong correlation regime. As was mentioned earlier, conventional restricted 
+in the strong correlation regime. As was mentioned earlier, conventional 
+restricted 
 CC methods fail at strong correlation. We will return to the 
-discussion of strong correlation regime in Chapter~\ref{sec:cpd_rccsd}
+discussion of the strong correlation regime in 
+Chapter~\ref{sec:strong_correlation}

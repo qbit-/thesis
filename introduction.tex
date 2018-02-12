@@ -1,457 +1,127 @@
 \chapter{Introduction
 \label{ch:introduction}}
-In recent 50 years electronic structure methods evolved into powerful tools 
+In the last 50 years electronic structure methods evolved into powerful tools 
 used in many areas of research, including biochemistry, organic 
-synthesis and catalysis, materials design and astrophysics.~\cite{} The 
-electronic structure simulations help to understand many processes not easily 
+synthesis and catalysis, materials design and 
+astrophysics.~\cite{young2004computational} 
+Electronic structure simulations help to understand many processes not easily 
 accessible for experimental study, such as short-living transition complexes in 
-chemical reactions, as well as to simulate exotic states of matter, such as 
-superconductivity.~\cite{} An ever increasing demand for reliable 
-simulations requires a constant increase of accuracy of existing tools, as 
-well as the need to simulate larger and larger systems. 
+chemical reactions, and to study exotic states of matter, such as 
+superconductivity, topological insulators 
+etc.~\cite{imada1998metal,qi2011topological} An ever increasing demand for 
+reliable simulations requires a constant increase in both the accuracy of 
+existing tools and their performance to simulate larger and 
+larger systems. 
 
 Nowadays some successful approaches like density functional theory 
 (DFT) or second order many-body perturbation theory (MP2) can be routinely used 
-for the calculation of large size systems (200-1000 atoms). While being 
+for the calculation of large systems (200-1000 atoms). While 
 extremely efficient, these theories are often limited in their accuracy. 
-Another problem of these efficient methods is their failure to 
+Another problem of these low-cost methods is their failure to 
 describe many systems of interest, like transition states, open-shell molecules 
-and states of matter caused by significant quantum effects, such as Mott 
-insulators. The correlated behavior of electrons, which lays at the root of the 
-description of challenging quantum systems, proved hard to be simulated in 
-electronic structure. While a wide range of tools was developed over the 
-years,~\cite{} they are still limited to small systems due to a very steep 
-scaling of computational cost, and often suffer from numerical problems. Thus 
-the search for effective methods capable to capture electron correlation at all 
-ranges of molecular parameters remains an active topic of modern 
+and materials with significant quantum effects, such as Mott insulators. The 
+correlated behavior of electrons, which lays at the root of the 
+description of challenging quantum systems, has proven to be difficult to 
+simulated in electronic structure. While a wide range of accurate tools has been
+developed over the years, they are still limited to small systems due to a very 
+steep scaling of computational cost, and often suffer from numerical problems. 
+Thus the search for effective methods remains an active topic of modern 
 computational chemistry.
 
-Traditional methods are based on configuration interaction (CI)-like expansion 
-around the Hartree-Fock (HF) solution. Some of them, like the coupled cluster 
-(CC) theory have evolved into highly efficient tools,\cite{benedict_intro} and 
-their accuracy and robustness have been proven in many 
-studies.\cite{benedict_intro} However, the steep scaling of computational cost 
-limits the application of coupled cluster to small systems. The cost of the 
-highly popular CCSD(T) method scales as $O(N^7)$, where $N$ is a measure of the 
-systems size. This means that for a twice large system the effort to get 
-solution is 128 times higher. The cause of the high cost of CC theories is a 
-large number of optimization parameters they use, which scales as $O(N^6)$ for 
-CCSD(T). This "curse of dimensionality" is a hallmark of methods based on 
-orthogonal expansions around Hartree-Fock solutions.
+Traditional approaches are based on configuration interaction (CI)-like 
+expansion around the Hartree-Fock (HF) solution. Some of them, like coupled 
+cluster (CC) theory, have evolved into highly efficient 
+algorithms,\cite{crawford2000introduction,tew2007electron} and their accuracy 
+and robustness have been proven in many 
+studies.\cite{bartlett2007coupled, larsen2000full, 
+feller2001extended, tajti2004heat, heckert2006basis, rauhut2009accurate} 
+However, the steep scaling of computational cost limits the application of 
+coupled cluster to small systems. 
+The cost of the highly popular CCSD(T) method scales as $O(N^7)$, where $N$ is a 
+measure of the system's size. This means that for a system twice as large 
+the time to get solution is 128 times higher. The cause of the high cost of CC 
+theories is the large number of optimization parameters they use, which grows 
+as $O(N^4)$ for CCSD(T). This "curse of dimensionality" is a hallmark of 
+theories based on orthogonal expansions around Hartree-Fock solutions.
 Additionally, CC methods have difficulties at strong correlation when the HF 
 solution becomes qualitatively incorrect. Alternative formulations of coupled 
-cluster which used different reference functions~\cite{} have exponential 
-scaling of computational cost and other numerical problems~\cite{} after decades 
+cluster which used better reference 
+functions~\cite{jeziorski1981coupled,mukherjee1989use} have exponential 
+scaling of computational cost and other numerical 
+problems~\cite{lyakh2011multireference} after decades 
 of research.
 
-However, there are many indications that traditional approaches are heavily 
-overparameterized: the electron correlation in molecules decays as 
-$\frac{1}{r^6}$, and hence the number of parameters should not grow 
-exponentially, but rather linearly with the size of the system. One such 
-indication is a family of recently developed Projected Hartree-Fock (PHF)
-methods by Scuseria, Jim{\'e}nez-Hoyos and coworkers.~\cite{} In contrast to 
-traditional approaches, PHF methods use a non-orthogonal expansion to 
-parameterize the solution, while having a formal cost of the Hartree-Fock. While 
-excelling at strong correlation, PHF methods, however, have a lower overall 
-accuracy than coupled cluster approach. Merging the ideas of PHF and CC theories 
-is an active topic of research.~\cite{}
+The root of the problem of high computational cost in electronic structure is 
+the need to manipulate tensors, which are high dimensional arrays of numbers. 
+Quite often, however, the entries in physically motivated tensors are not 
+independent, and a more compact representation with lower-dimensional tensors is 
+possible. One of the first applications of this idea is "resolution of 
+identity" (RI)~\cite{vahtras1993integral,weigend1998ri,hattig2000cc2, 
+ahlrichs2004efficient} or "density fitting" 
+(DF)~\cite{werner2003fast,schutz2003linear,manby2003density} which emerged in 
+context of DFT more than 40 years ago, and which was widely used in explicitly 
+correlated methods 
+later.~\cite{kutzelnigg1985r,rychlewski2013explicitly,valeev2000evaluation} 
+Closely related to RI/DF are methods based on 
+Choleski decomposition (CD).~\cite{weigend2009approximated} RI/DF decompositions 
+approximate the 
+four index Coulomb interaction potential with lower dimensional objects, making 
+it possible to perform index summations occurring in electronic structure 
+calculations with lower complexity. In the context of DFT this leads to an 
+order of magnitude decrease in computational cost. 
 
-This work pursues two related lines of research. First, we extend the 
-application of the Projected Hartree-Fock for practical applications. The 
-calculation of energy derivatives and dipole moments is often required in 
-simulations, for example, to estimate equilibrium structure of molecules and 
-their vibrational spectra. We derive analytical energy gradients for the 
-single-reference PHF theory, which allows efficient calculation of the said 
-quantities. Our development is supplied with exemplary calculations of 
-some sizable molecules.
+Another type of tensor decomposition was introduced by 
+Alml{\"o}~\cite{almlof1991elimination} in the context of MP2. With the help of 
+a Laplace transformation, the energy denominator can be approximated by a 
+factorizable expression, which also leads to significant cost savings. The 
+Laplace-MP2 approach was extended to the calculation of periodic systems by 
+Izmaylov and Scuseria.~\cite{izmaylov2008resolution}
 
-The second line of work is devoted to traditional coupled cluster 
-methods. Coupled cluster parameterize the solution in terms of cluster 
-amplitude tensors, the multidimensional arrays of numbers responsible for the 
-implausible cost of CC methods. We show how to reduce the computational effort 
-of the restricted coupled cluster with singles and doubles (RCCSD) by two 
-orders of magnitude by introducing new representations for the cluster 
-amplitudes. By using tensor decompositions high order amplitude tensors are 
-approximated by sets of matrices, which is a key in reducing the cost of 
-coupled cluster. We demonstrate the accuracy of our low-cost approach by 
-benchmark calculations on various organic molecules. Lastly, we discuss other 
-interesting interesting properties our approach may have.
+Recently, in a series of works more general tensor decompositions were proposed 
+in accurate post Hartree-Fock calculations. Hino~\emph{et al.} developed a 
+lower cost CCSD(T) method by applying Singular Value Decomposition to ${}^3 T$ 
+amplitudes.~\cite{hino2004singular} Benedikt \emph{et al.}~\cite{benedict_mp2, 
+benedict_ccd} utilized 
+canonical polyadic decomposition (CPD) in the context of the MP2 and CC 
+doubles approaches, and discussed the application of matrix product 
+states in 
+post-HF calculations.~\cite{benedikt_mps} Hohenstein, Parrish, Martinez and 
+coworkers developed a tensor hypercontraction (THC) format by applying CP 
+decomposition to three-center integrals produced by the RI/DF procedure. Their 
+DF-THC factorization allows MP2 calculations in quartic 
+cost.~\cite{kokkila2015tensor} Later THC was extended by these and other 
+authors to approximate 
+CC theories~\cite{parrish2014communication, hohenstein2013tensor}, as well as 
+to interaction potentials in nuclear physics.~\cite{parrish2013exact} While 
+demonstrating the great value of tensor 
+factorizations in post Hartree-Fock methods, none of these 
+works developed the idea in context of coupled cluster to its full potential.
 
-In the next chapter a short review and theoretical background on the 
-electronic structure problem is given. In 
-chapter~\ref{ch:projected_hartree_fock} we provide a more in-depth 
-overview of the Projected Hartree-Fock method, followed by the derivation of 
-its energy gradient expression. We conclude with an example 
-calculation of geometries and harmonic spectra of  benzine 
-biradicals. In chapter~\ref{ch:tcc} we discuss the cause of high 
-computational cost of CC methods, followed by the idea of tensor 
-decompositions. Chapter~\ref{ch:tcc} is concluded with a derivation of a 
-general scheme for applying tensor decompositions in context of coupled cluster 
-methods. Chapter~\ref{ch:app_tcc} presents some applications of the proposed 
-methods. We estimate the accuracy of approximating different ingredients of 
-coupled cluster equations and test approximate CC methods on a large set of 
-molecules. Chapter~\ref{ch:app_tcc} concludes with a discussion of an 
-additional interesting properties our methods possess. An overall conclusion 
+Our interest in this work is the application of tensor decompositions in
+traditional coupled cluster with singles and doubles (CCSD). Efficient 
+implementations of CCSD are important as it is the base of the famous "gold 
+standard" CCSD(T) approach. Additionally, our interest in improving CCSD is 
+motivated by a series of CC-like methods developed in the Scuseria 
+group,~\cite{degroote2016polynomial, gomez2017attenuated, 
+qiu2017projected2, hermes2017combining} which have potential to describe 
+strongly correlated systems yet use Hartree-Fock as a reference function. Ideas 
+developed for CCSD could be transferred to these novel techniques. In the 
+present work we demonstrate how to apply tensor decompositions to cluster 
+amplitudes in a uniform framework. We use two factorizations considered before, 
+namely CP and THC, to decrease the cost of restricted CCSD (RCCSD) by two orders 
+of magnitude. The scheme, however, is quite general and is not limited to the 
+mentioned factorizations.  
+
+In the next chapter a short review of the 
+electronic structure problem is given. We introduce the concept of electronic 
+correlation and discuss the ideas behind the coupled cluster method. In 
+chapter~\ref{ch:tcc} we discuss the cause of high computational cost of CC 
+methods, followed by an overview of tensor decompositions. 
+Chapter~\ref{ch:tcc} is concluded with a derivation of a general scheme for 
+applying tensor decompositions to cluster amplitudes. Chapter~\ref{ch:app_tcc} 
+presents some applications of THC- and CPD-based approximate CC methods.  We 
+estimate the accuracy of approximating different ingredients of coupled cluster 
+equations and test THC- and CPD-RCCSD methods on a large set of 
+molecules. Chapter~\ref{ch:app_tcc} concludes with a discussion of
+additional interesting properties our approach may have. An overall conclusion 
 and outlook is given in chapter~\ref{ch:conclusions}.
-
-
-\chapter{Preliminaries
-\label{ch:preliminaries}}
-
-\section{The electronic structure problem}
-\label{sec:motivation}
-The goal of quantum chemistry is to simulate and predict the behavior 
-of chemical systems. At the root of chemical phenomena is a collective motion 
-of electrons in the field of the nuclei. Together, electrons form a quantum 
-many-body system. If one would be able to efficiently simulate the energy and 
-the state of this system numerically, many questions of chemistry could be 
-answered.
-
-Since the advent of quantum mechanics all ingredients of many-body simulations 
-are set. One needs to find the eigenvectors and eigenvalues of the 
-Hamiltonian describing the system:
-%
-\begin{equation}
- H | \Psi \rangle = E | \Psi \rangle
- \label{eq:schroedinger}
-\end{equation}
-%
-where $|\Psi \rangle = \Psi(\vec{x_{1}}, \vec{x_{2}}, \vec{x_{3}}\ldots 
-\vec{x_{M}})$ is a wavefunction describing the state of an $M$-electron system 
-and $E$ is the energy of the state. The variables $\vec{x}$ describe the 
-degrees of freedom of the electrons, like coordinates and spin.
-The Hamiltonian is usually written in a short form, due to the 
-equivalence of quantum particles:
-%
-\begin{equation}
- \hat{H}(\vec{x^{\star}_{1}}\ldots 
-\vec{x^{\star}_{M}}, \vec{x_{1}}\ldots 
-\vec{x_{M}}) = h^{0} + \hat{h}(\vec{x^{\star}}, \vec{x}) + 
-\frac{1}{2} \hat{V}(\vec{x^{\star}}, \vec{y^{\star}}, \vec{x}, 
-\vec{y}) \qquad \forall \vec{x}, \vec{y} \in \{\vec{x}_{1}, \ldots, \vec{x}_{M} 
-\}
-\end{equation}
-%
-Here $h^{0}$ is a constant, $\hat{h}$ is a one-body part, e.g. it acts on each 
-electron individually, and $\hat{V}$ is a two body part, acting on every pair 
-of electrons. 
-
-To solve~\ref{eq:schroedinger} in practice a discrete basis with $N$ 
-functions is introduced for each of the variables $\vec{x}$, the procedure 
-mathematicians would call Galerkin discretization. We denote this new 
-$N$-valued discreet spaces by $\mathcal{V}$. As the number of basis functions 
-increases, the solution of the discretized problem will approach the true 
-solution of~\ref{eq:schroedinger}. After standard approximations, like a 
-Born-Oppenheimer approximation,~\cite{} the molecular Hamiltonian becomes:
-%
-\begin{equation}
- \hat{H} = h^{nr} + h_{\mu \nu} a^{\dagger}_{\mu} a_{\nu} + \frac{1}{2} V_{\mu 
-\nu \lambda \sigma} a^{\dagger}_{\mu} a^{\dagger}_{\nu} a_{\sigma} a_{\lambda}
-\label{eq:hamiltonian}
-\end{equation}
-%
-We imply summation over repeated indices in the expression above and the rest 
-of the text unless otherwise stated. In Eqn.~\ref{eq:hamiltonian} the constant 
-$h^{nr}$ is a nuclear repulsion energy, the one-body part $h$ describes a 
-kinetic energy of an electron and its attraction to the nuclei:
-%
-\begin{equation}
- h_{\mu \nu} = \int d\vec{x_{1}} ~ \mu^{\star}(\vec{x_{1}}) \left( - 
-\frac{1}{2} \nabla^2 - \sum_{a} \frac{Z_{a}}{|\vec{x_{1}} - 
-\vec{r_{a}}|} \right) \nu(\vec{x_{1}})
-\end{equation}
-% 
-The functions $\mu(\vec{x}), \nu(\vec{x})$ are basis functions used for the 
-discretization of the problem and $r_{a}$ and $Z_{a}$ are the 
-position and the charge of the nuclei. The two-body, or electron repulsion 
-part, is
-%
-\begin{equation}
- V_{\mu \nu \lambda \sigma} = \int \int d\vec{x_{1}} d\vec{x_{2}}~ 
-\mu^{\star}(\vec{x_{1}}) \nu^{\star}(\vec{x_{2}}) 
-\frac{1}{|\vec{x_{1}} - \vec{x_{2}}|} 
-\sigma(\vec{x_{2}}) \lambda(\vec{x_{1}}) 
-\end{equation}
-% 
-We denoted by $a^{\dagger}_{\mu}$ and $a_{\mu}$ creation and 
-annihilation operators. For example, $a^{\dagger}_{\mu}$ creates a single 
-particle state $a^{\dagger}_{\mu} | - \rangle = | \mu \rangle$, where $| - 
-\rangle$ is a physical vacuum. Equivalently, $a^{\dagger}_{\mu}$ and $a_{\mu}$ 
-can be thought as simply a $\mu$-th unit vector (or its adjoint) in the 
-discrete space $\mathcal{V}$, and $| - \rangle$  as a zero vector.
-
-Despite a simple structure of the Hamiltonian, even a discretized
-Schr{\"o}edinger equation is hard to solve. The solution is contained in an 
-antisymmetric product (due to Pauli exclusion 
-principle) of single particle vector spaces. The resulting space, called 
-Hilbert space of the problem, is: 
-%
-\begin{equation}
- \mathcal{H} = \underbrace{\mathcal{V} \times \mathcal{V} \times \mathcal{V} 
-\times \ldots}_{M ~\mathrm{times}}
-\end{equation}
-%
-The Hamiltonian is thus a matrix in $\mathcal{H} \times \mathcal{H}$. The total 
-size of the eigenvector of the Hamiltonian $|\Psi \rangle$ is 
-of order of $N^{M}$ (it is actually $N \choose M$ because $\mathcal{H}$ is an 
-antisymmetric vector space). Even for relatively small $M$ and $N$ a direct 
-calculation of $|\Psi \rangle$ becomes prohibitive. The main problem of 
-theoretical chemistry is thus, how to build feasible and accurate approximations 
-to the true eigenvectors of $H$.
-
-A commonly used approach is to use the variational principle~\cite{} to 
-calculate the energy expectation value $\tilde{E}$ of a test wavefunction 
-$\tilde{\Psi}$:
-%
-\begin{equation}
- \tilde{E} = \frac{\langle \tilde{\Psi} | H | \tilde{\Psi} \rangle}{\langle 
-\tilde{\Psi} |\tilde{\Psi} \rangle} 
-\end{equation}
-%
-It can be proved that this expectation value for a normalized  
-function is an upper bound of the exact energy:
-%
-\begin{equation}
- E \geq E_{\mathrm{exact}}
-\end{equation}
-Although not all approaches to solve \ref{eq:schroedinger} are variational, 
-variational nature is a valuable property of any particular method. 
-
-\section{Solving Schr{\"o}edinger equation}
-\label{sec:solving}
-\subsection{Exact solution}
-As we mentioned before, the direct solution of Sch{\"o}edinger equation is hard 
-to obtain. One may still, however, embark on this task for very small systems. 
-Let us introduce a basis of all states with $M$ electrons in the Hilbert 
-space $\mathcal{H}$. This basis will contain all possible products of $M$ 
-creation operators. Due to the antisymmetry of the 
-wavefunction for electrons:
-%
-\begin{equation}
-  \Psi(\vec{x_{1}}, \vec{x_{2}}) = - \Psi(\vec{x_{2}}, \vec{x_{1}}) 
-\end{equation}
-%
-those products will contain only the combinations of $a^{\dagger}_{\mu}$ 
-without repetitions over the index $\mu$ (repeated index will necessary turn 
-product to zero):
-%
-\begin{equation}
- | \phi \rangle = \prod_{k=1}^{M} a^{\dagger}_{\mu_{k}} |- \rangle  
- \label{eq:slater_determinant}
-\end{equation}
-%
-In total there will be $N \choose M$ products of the
-form~\ref{eq:slater_determinant}, usually called Slater determinants or 
-configurations. The Hamiltonian matrix can be written in this basis and 
-diagonalized:
-%
-\begin{equation}
-\begin{aligned}
- H_{ij} &= \langle \phi_{i} | \hat{H} | \phi_{j} \rangle \\
- | \Psi_{i} \rangle &= U_{ij} |\phi_{j} \rangle
-\end{aligned}
-\end{equation}
-%
-The eigenvectors $| \Psi \rangle$ obtained in this way and their respective 
-eigenvalues are exact solutions to the Schr{\"o}edinger equation in a given 
-basis. When available, they are often used as reference values in 
-evaluation of the quality of quantum chemistry algorithms. Direct 
-diagonalization, however, is possible only for the smallest systems. The 
-simulation of a 12-electron system, like two carbon atoms, in a mediocre basis 
-set of 10 basis functions per electron will involve a diagonalization of a 
-matrix of size $1.054 \cdot 10^{16}$ which is already at the border of today's 
-computational capabilities.
-
-One may notice, however, that the molecular Hamiltonian is almost diagonal in 
-the $M$-particle Hilbert space, as only one- and two-body parts are non-zero. 
-This provides grounds for an important approximate method we are going to 
-consider next. 
-
-\subsection{Hartree-Fock solution}
-The Hartree-Fock (HF) method is a starting point of most many-body approaches.
-The idea of Hartree-Fock is to find a single best determinant to 
-approximate the wavefunction:
-%
-\begin{equation}
- |\Psi_{SD} \rangle = \prod_{k=1}^{M} c_k^{\dagger} | -\rangle, \qquad 
-c_{k}^{\dagger} = C_{\mu k} \cdot a^{\dagger}_{\mu}
-\label{eq:single_determinant}
-\end{equation}
-% 
-the parameters of this \emph{ansatz} are contained in the basis transformation 
-matrix $C$. The energy 
-of the state~\ref{eq:single_determinant} is:
-%
-\begin{equation}
- E = \frac{\langle \Psi_{SD} | H | \Psi_{SD} \rangle}{\langle \Psi_{SD} | 
-\Psi_{SD} \rangle}
- \label{eq:hf_energy}
-\end{equation}
-%
-The solution is found by minimizing the energy in~\ref{eq:hf_energy}, 
-while constraining matrix $C$ to be unitary. The later is equivalent to 
-minimizing a lagrangian:
-%
-\begin{equation}
-\begin{aligned}
-L(C, \epsilon) = h_{\mu \nu} \rho_{\nu \mu} &+ \frac{1}{2} 
-V_{\mu \lambda \nu \sigma} \rho_{\nu \mu } \rho_{\sigma \lambda}  + 
-\epsilon_{ij}(C^{\ast}_{\mu i} S_{\mu \nu} C_{\nu j} - 1_{N \times N})\\
-\rho_{\nu \mu} &= C^{\ast}_{\mu i} C_{\nu i} 
-\label{eq:hf_lagrangian}
-\end{aligned}
-\end{equation}
-%
-Here $C$ is a basis transformation one is solving for, $\epsilon$ is a 
-set of lagrange multipliers used to enforce the unitary constraint, $1_{N 
-\times N}$ is an identity matrix and $S_{\mu \nu} = \langle a^{\dagger}_{\mu} 
-a_{\nu} \rangle $ is an overlap matrix of the possibly non-orthogonal original 
-basis vectors $a$. Let us note that Hartree-Fock method 
-is variational, and hence provides an upper bound for
-the energy.\cite{levine2000quantum} 
-
-There are multiple ways of solving Hartree-Fock equations, which we will not 
-discuss here, but rather present a final result of the most well-known method 
-of Roothaan.~\cite{roothan_carlos} By taking a derivative 
-of~\ref{eq:hf_lagrangian} with respect to $C$, one ends up with a matrix 
-equation:
-%
-\begin{equation}
-\begin{aligned}
- FC^{\ast} &= \epsilon C^{\ast} S\\
- F_{\mu \nu} &= h_{\mu \nu} + V_{\mu \lambda \nu \sigma} \rho_{\sigma \lambda} 
- \label{eq:hf_roothaan}
-\end{aligned}
-\end{equation}
-%
-The equation~\ref{eq:hf_roothaan}, which looks like an eigenvalue problem for 
-the Fock matrix $F$, is non-linear in $C$. It is solved by iterations starting 
-from a guess for the transformation $C$. 
-
-The Roothaans equation amounts to an important interpretation of the 
-Hartree-Fock method. Note that if there would be no interaction term in the 
-Hamiltonian, the Hartree-Fock would correspond to the exact 
-diagonalization, and a Slater determinant, which is an antisymmetric direct 
-product of single particle wavefunctions, would be an exact 
-eigenstate. The Fock matrix in Eqn.~\ref{eq:hf_roothaan}, thus is a diagonal
-approximation of the Hamiltonian, where the actual two-particle interaction 
-$\hat{V}$ is replaced by a one-body term $\hat{V}_{eff} = \hat{V} \hat{\rho}$. 
-The HF solution describes the electrons as if they would not immediately repel 
-each other through Coulombic interaction, but rather move 
-independently in an average potential $\hat{V}_{eff}$ of all other electrons. In 
-reality, however, the electrons avoid each other dynamically. This brings us to 
-the concept of electronic correlation: the true solution would need to account 
-for the correlated motion of electrons. We would discuss this in more detail in 
-the section.~\ref{sec:electronic_correlation} 
-
-Overall, the Hartree-Fock method is a cornerstone of quantum chemistry due to 
-its simplicity and theoretical basis. The computational cost of Hartree-Fock is 
-$O(N^4)$ floating point operations in its simplest variants (and much less 
-in optimized formulations\cite{}), which makes it one of the most 
-affordable methods in electronic structure theory. Not being widely used on its 
-own in practical simulations, it remains a usual starting point of most 
-many-body approaches.
-
-
-\subsection{Electronic correlation
-\label{sec:electronic_correlation}}
-
-Put simply, the electronic correlation is a difference between the exact and 
-Hartree-Fock solution, and correlation energy is a difference between HF and 
-exact energies. We will classify correlation based on two 
-sources of errors introduced by the Hartree-Fock method, however, this division 
-is only relative:
-
-\begin{itemize}
-\item Dynamic or weak correlation arises from small deviations of 
-the Hartree-Fock potential and a faithful two-body interaction. It can be 
-interpreted as an effect of short-range instantaneous repulsion between 
-electrons.
-\item Static or strong correlation emerges when the Hartree-Fock potential 
-significantly deviates from the real two-body interaction, e.g. when the 
-Hamiltonian is not a diagonally dominant matrix. Static correlation 
-manifests as a near or exact degeneracy of different Slater determinants, and 
-the single determinant picture becomes incorrect.
-\end{itemize}
-
-Let us illustrate the regions where different types of error of the HF method 
-dominate in the process of nitrogen dissociation. 
-%
-\begin{figure}[tb]
-%\includegraphics[width=\columnwidth]{figures/intro/n2_hf_exact}
-\caption{Dissociation of nitrogen molecule using cc-pVDZ basis set. RHF refers 
-to restricted Hartree-Fock, exact is taken from the exact diagonalization data.
-\label{fig:n2_hf_exact}}
-\end{figure}
-%
-Near the equilibrium the difference of Hartree-Fock and and exact energies is 
-mostly related to short-range dynamical electronic repulsion. When the $N_2$ 
-bond is stretched, the bonding, $\sigma^{\ast}_{2p}$ and antibonding $\pi_{2p}$ 
-orbitals become degenerate, leading to the major overestimation of 
-dissociation energy by the HF method. Let us now provide some examples of 
-different types of correlation and its relation to physical phenomena.
-
-Most correlation in "normal" systems is dynamical. Typical examples 
-are usual organic molecules at equilibrium, most metals, semiconductors 
-etc. Despite HF accounts for around $99\%$ of electronic energy, proper 
-description of dynamical correlation is crucial in quantitative calculations.
-For example, even for atoms, HF excitation energies may be wrong by 
-more than as $40\%$~\cite{irek_9}, which leads to incorrect prediction of 
-ionization potentials. Though difficult to generalize, lack of 
-correlation leads to too short bonds at equilibrium, incorrect bond angles, 
-errors in the dipole moments and too high harmonic vibrational 
-frequencies.~\cite{irek_11, irek_12} HF usually predicts too high reaction 
-barriers, which can be understood by the problems of HF to describe stretched 
-bonds. Finally, Hartree-Fock approach is unable to predict pure 
-dispersion interaction~\cite{irek_13}, correlation bound anions~\cite{irek_14} 
-and similar systems.  
-
-Statically correlated systems are where the shortcomings of Hartree-Fock theory 
-are most pronounced, as independent particle picture becomes inappropriate. 
-Static correlation is very common in extended systems and materials 
-where $d$- and $f$-electron shells of atoms interact. Among many phenomena 
-caused by strong correlation are large resistivity changes, huge volume changes 
-across phase transitions, heavy fermion behavior, large 
-magnetoresistence and high temperature superconductivity.~\cite{irek_15, 
-irek_16}. Strongly correlated systems are of great importance and constant 
-theoretical interest. Accounting for strong correlation is challenging for 
-modern electronic structure methods.
- 
-The community of quantum chemists worked for decades to build methods to 
-for properly accounting for electronic correlation. Up to now all existing 
-approaches are flawed in one way or another. Nevertheless, let us list some 
-important features an ideal approximate solution should have, which we will be 
-using for comparison of different theories through the discussion:
-
-\begin{itemize}
- \item Ideally, a theorist should seek an method which works well in the 
-whole range of the parameters of the problem, e.g. which would provide accurate 
-solutions both in strong and weak correlation regimes, independently of the 
-size of the system. 
-
-\item The method should be computationally tractable, with polynomial, and 
-preferably low, dependence of cost on the system size.
-
-\item A good many-body theory should be systematically improvable to provide a 
-trade-off between accuracy and computational cost.
-
-\item The method should be size consistent, which means that the energy of two 
-non-interacting fragments $A$ and $B$ must be the sum of energies of those 
-fragments calculated independently
-\begin{equation}
- E(A \overset{d \longrightarrow \infty}{--} B) = E(A) + E(B)
-\end{equation}
-
-\item The predicted energy should scale linearly with the size of the system, 
-e.g. the energy of $k$ non-interacting particles, like Helium atoms far apart 
-from each other, should equal to the sum of energies of individual particles.
-\begin{equation}
- E(k \cdot \mathrm{He}) = k \cdot E(\mathrm{He})
-\end{equation}
-This property is called size extensivity and is important in thermodynamics, 
-where extensive quantities scale with system size
-\end{itemize}
-
-Let us now will provide more specific details on the coupled cluster 
-and projected Hartree-Fock methods in the next chapters. 
-
