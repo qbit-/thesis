@@ -130,9 +130,7 @@ normalizable function is an upper bound of the exact energy:
 Although not all approaches to solve \ref{eq:schroedinger} are variational, 
 variational nature is a valuable property of any particular method. 
 
-\section{Solving the Schr{\"o}dinger equation}
-\label{sec:solving}
-\subsection{Exact solution}
+\section{Exact solution of Schr{\"o}dinger equation}
 As we mentioned before, the direct solution of the Sch{\"o}dinger equation is 
 hard to obtain. One may still, however, embark on this task for very small 
 systems. Let us introduce a basis of all states with $M$ electrons in the 
@@ -180,7 +178,7 @@ the $M$-particle Hilbert space, as only one- and two-body parts are non-zero.
 This provides grounds for an important approximate method we are going to 
 consider next. 
 
-\subsection{Hartree-Fock solution}
+\section{Hartree-Fock solution}
 The Hartree-Fock (HF) method is the starting point of most many-body approaches.
 The idea of Hartree-Fock is to find a single best determinant to 
 approximate the wavefunction:
@@ -269,7 +267,7 @@ widely used on its own in practical simulations, it remains a usual starting
 point of most many-body approaches.
 
 
-\subsection{Electronic correlation
+\section{Electronic correlation
 \label{sec:electronic_correlation}}
 
 Put simply, electronic correlation is the difference between the exact and 
@@ -554,28 +552,6 @@ Eqn.~\ref{eq:bch_expansion}. The similarity transformed Hamiltonian $\bar{H}$
 will thus be a polynomial of up to fourth order in excitation operators 
 $\hat{T}$.
 
-If the excitation operator $\hat{T}$ contained all possible orders of 
-excitations~$\{ {}^{1}\hat{T}, {}^{2}\hat{T}, \ldots \}$, 
-the coupled cluster would be equivalent to exact diagonalization. To have a 
-practical method one needs to truncate $\hat{T}$. The most common 
-truncation level is doubles, e.g:
-%
-\begin{equation}
- \hat{T} =  {}^{1}T_{i}^{a} c^{\dagger}_{a} c_{i} + \frac{1}{4} {}^2T_{ij}^{ab} 
-c^{\dagger}_{a} c^{\dagger}_{b} c_{j} c_{i}
-\end{equation}
-%
-The order of excitation operator $\hat{T}$ determines the name of a particular 
-coupled cluster method, with \textbf{S} meaning singles, \textbf{D} denoting 
-doubles, \textbf{T} referring to triples etc. Note that by construction CCSD is 
-exact for 2-electron systems, CCSDT is exact for 3-electron systems and so on. 
-The effect of including single excitations on the accuracy of coupled cluster 
-is usually not large, and hence they can often be omitted resulting in the 
-simpler coupled cluster with doubles (CCD) method. The cost of coupled cluster 
-rises quickly with the order of excitation operator, being of order $O(N^6)$ 
-for CCSD, $O(N^8)$ for CCSDT and $O(N^{10})$ for CCSDTQ (see 
-chapter~\ref{ch:tcc} for a detailed discussion).
-
 After using the BCH expansion, we are finally in a position to formulate a 
 general coupled cluster method. The similarity transformed Schr{\"o}dinger 
 equation is:
@@ -611,8 +587,7 @@ rules~\cite{jensen2017introduction} the energy of coupled cluster is:
 \end{aligned}
 \end{equation}
 %
-The energy expression justifies the usual truncation of the cluster operator 
-$\hat{T}$ at doubles. To have a working theory, however, one would need to 
+To have a working theory, however, one would need to 
 determine cluster amplitudes $\{{}^{1}T, {}^{2}T, {}^{3}T, \ldots$. This can be 
 done by projecting the similarity transformed Hamiltonian onto a set of excited 
 configurations $\{ \langle \Psi_{i}^{a}, \Psi_{ij}^{ab}, \Psi_{ijk}^{abc}, 
@@ -636,7 +611,32 @@ amplitudes of order $n + 2$ (if they were present in cluster operator), in
 contrast with the energy expression. The inclusion of higher order amplitudes 
 into $\hat{T}$ affects the energy only indirectly through corrections to 
 singles and doubles. The coupling of residual equations is what gave the name 
-to the coupled cluster theory. With this result all basic components of a 
+to the coupled cluster theory.
+
+If the excitation operator $\hat{T}$ contained all possible orders of 
+excitations~$\{ {}^{1}\hat{T}, {}^{2}\hat{T}, \ldots \}$, 
+the coupled cluster would be equivalent to exact diagonalization. To have a 
+practical method one needs to truncate $\hat{T}$. The energy expression 
+justifies the usual truncation of the cluster operator 
+$\hat{T}$ at doubles, e.g.:
+%
+\begin{equation}
+ \hat{T} =  {}^{1}T_{i}^{a} c^{\dagger}_{a} c_{i} + \frac{1}{4} {}^2T_{ij}^{ab} 
+c^{\dagger}_{a} c^{\dagger}_{b} c_{j} c_{i}
+\end{equation}
+%
+The order of excitation operator $\hat{T}$ determines the name of a particular 
+coupled cluster method, with \textbf{S} meaning singles, \textbf{D} denoting 
+doubles, \textbf{T} referring to triples etc. Note that by construction CCSD is 
+exact for 2-electron systems, CCSDT is exact for 3-electron systems and so on. 
+The effect of including single excitations on the accuracy of coupled cluster 
+is usually not large, and hence they can often be omitted resulting in the 
+simpler coupled cluster with doubles (CCD) method. The cost of coupled cluster 
+rises quickly with the order of excitation operator, being of order $O(N^6)$ 
+for CCSD, $O(N^8)$ for CCSDT and $O(N^{10})$ for CCSDTQ (see 
+chapter~\ref{ch:tcc} for a detailed discussion).
+
+With this result all basic components of a 
 general coupled cluster method are set. We will go on to describe a 
 particular method used in this work in the next section as well as the procedure 
 of finding cluster amplitudes.
